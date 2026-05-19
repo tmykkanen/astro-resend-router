@@ -2,80 +2,80 @@ import config from "virtual:astro-resend-router/config";
 import { errorResponse } from "../errors.ts";
 import { resend } from "../resend.ts";
 import type {
-  ParseRecipientSuccess,
-  ValidateTargetsResults,
+	ParseRecipientSuccess,
+	ValidateTargetsResults,
 } from "../types.ts";
 
 export const validateTargets = async (
-  parsed: ParseRecipientSuccess,
+	parsed: ParseRecipientSuccess,
 ): Promise<ValidateTargetsResults> => {
-  const action = parsed.action ? { action: parsed.action } : {};
+	const action = parsed.action ? { action: parsed.action } : {};
 
-  // Validate against local user config
-  const localSegment = config.segments.find(
-    (segment) => segment.name === parsed.segment,
-  );
+	// Validate against local user config
+	const localSegment = config.segments.find(
+		(segment) => segment.name === parsed.segment,
+	);
 
-  if (!localSegment)
-    return {
-      ok: false,
-      res: errorResponse(
-        `Segment [${parsed.segment}] is not configured. Add to user configuration to proceed.`,
-        400,
-      ),
-    };
+	if (!localSegment)
+		return {
+			ok: false,
+			res: errorResponse(
+				`Segment [${parsed.segment}] is not configured. Add to user configuration to proceed.`,
+				400,
+			),
+		};
 
-  const { data: remoteSegment, error: resendSegmentError } =
-    await resend.segments.get(localSegment.segmentId);
+	const { data: remoteSegment, error: resendSegmentError } =
+		await resend.segments.get(localSegment.segmentId);
 
-  if (resendSegmentError || !remoteSegment)
-    return {
-      ok: false,
-      res: errorResponse(
-        `Error fetching segment [${localSegment.name}] from resend: ${resendSegmentError.message}`,
-        500,
-      ),
-    };
+	if (resendSegmentError || !remoteSegment)
+		return {
+			ok: false,
+			res: errorResponse(
+				`Error fetching segment [${localSegment.name}] from resend: ${resendSegmentError.message}`,
+				500,
+			),
+		};
 
-  const localTopic = parsed.topic
-    ? localSegment.topics?.find((topic) => topic.name === parsed.topic)
-    : undefined;
+	const localTopic = parsed.topic
+		? localSegment.topics?.find((topic) => topic.name === parsed.topic)
+		: undefined;
 
-  if (parsed.topic && !localTopic) {
-    return {
-      ok: false,
-      res: errorResponse(
-        `Topic [${parsed.topic}] is not configured for segment [${parsed.segment}]`,
-        400,
-      ),
-    };
-  }
+	if (parsed.topic && !localTopic) {
+		return {
+			ok: false,
+			res: errorResponse(
+				`Topic [${parsed.topic}] is not configured for segment [${parsed.segment}]`,
+				400,
+			),
+		};
+	}
 
-  if (!localTopic) {
-    return {
-      ok: true,
-      ...action,
-      segment: remoteSegment,
-    };
-  }
+	if (!localTopic) {
+		return {
+			ok: true,
+			...action,
+			segment: remoteSegment,
+		};
+	}
 
-  const { data: remoteTopic, error: topicError } = await resend.topics.get(
-    localTopic.topicId,
-  );
+	const { data: remoteTopic, error: topicError } = await resend.topics.get(
+		localTopic.topicId,
+	);
 
-  if (topicError || !remoteTopic)
-    return {
-      ok: false,
-      res: errorResponse(
-        `Error fetching topic [${localTopic.name}] from resend: ${topicError.message}`,
-        500,
-      ),
-    };
+	if (topicError || !remoteTopic)
+		return {
+			ok: false,
+			res: errorResponse(
+				`Error fetching topic [${localTopic.name}] from resend: ${topicError.message}`,
+				500,
+			),
+		};
 
-  return {
-    ok: true,
-    ...action,
-    segment: remoteSegment,
-    topic: remoteTopic,
-  };
+	return {
+		ok: true,
+		...action,
+		segment: remoteSegment,
+		topic: remoteTopic,
+	};
 };
