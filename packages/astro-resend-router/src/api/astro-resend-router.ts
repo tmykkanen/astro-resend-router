@@ -6,6 +6,18 @@ import { parseRecipient } from "../lib/webhook/parse.ts";
 import { validateTargets } from "../lib/webhook/validate.ts";
 import { verifyWebhook } from "../lib/webhook/verify.ts";
 
+export const GET: APIRoute = async () => {
+	console.log("API Route [astro-resend-router] is live");
+	return new Response(
+		JSON.stringify({
+			message: "API Route [astro-resend-router] is live",
+		}),
+		{
+			status: 200,
+		},
+	);
+};
+
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		// Verify webhook
