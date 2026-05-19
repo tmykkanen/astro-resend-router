@@ -7,8 +7,6 @@ import { createVM } from "./lib/vite/virtual-module.ts";
 export function integration(userConfig: UserConfig): AstroIntegration {
 	const parsedUserConfig = UserConfigSchema.parse(userConfig);
 
-	console.log(parsedUserConfig);
-
 	return {
 		name: "astro-resend-router",
 		hooks: {
