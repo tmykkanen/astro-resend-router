@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 0.6.0
+
+### Minor Changes
+
+- [`63016dc`](https://github.com/tmykkanen/astro-resend-router/commit/63016dcccae14c3df770544220ebae22f045de44) Thanks [@tmykkanen](https://github.com/tmykkanen)! - api rewrite to support segment specific settings
+
 ## 0.5.0
 
 ### Minor Changes
