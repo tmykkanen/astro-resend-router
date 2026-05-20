@@ -2,7 +2,6 @@ import type { AstroIntegration } from "astro";
 import { envField } from "astro/config";
 import { AstroError } from "astro/errors";
 import { UserConfigSchema } from "./lib/schemas.ts";
-// import type { z } from "astro/zod";
 import type { UserConfig } from "./lib/types.ts";
 import { createVM } from "./lib/vite/virtual-module.ts";
 
@@ -13,10 +12,10 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 			`Did you forget to call the integration?
 
          🤦‍♂️ Incorrect:
-         astroResendRouter
+         resendRouter
 
          ✅ Correct:
-         astroResendRouter({
+         resendRouter({
            segments: [...]
          })`,
 		);
