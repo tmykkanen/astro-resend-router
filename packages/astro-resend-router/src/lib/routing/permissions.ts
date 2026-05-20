@@ -1,17 +1,21 @@
-import config from "virtual:astro-resend-router/config";
 import { errorResponse } from "../errors.ts";
 import { resend } from "../resend.ts";
-import type { VerifyPermissionsResult } from "../types.ts";
+import type {
+	ValidateTargetsSuccess,
+	VerifyPermissionsResult,
+} from "../types.ts";
 
 export const verifyPermissions = async (
+	validTargets: ValidateTargetsSuccess,
 	requestFrom: string,
 ): Promise<VerifyPermissionsResult> => {
 	const email = requestFrom.toLowerCase();
 
-	// 1. authorizedSenders configured in astro.config.mjs
-	if (config.authorizedSenders?.includes(email)) return { ok: true };
+	// Check for authorizedSenders configured in astro.config.mjs
+	if (validTargets.segment.authorizedSenders?.includes(email))
+		return { ok: true };
 
-	// 2. Check for authorized_sender === 'true' in contact properties on Resend
+	// Check for authorized_sender === 'true' in contact properties on Resend
 	const { data: contact, error } = await resend.contacts.get({
 		email: requestFrom,
 	});

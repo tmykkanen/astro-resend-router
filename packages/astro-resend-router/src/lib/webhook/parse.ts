@@ -1,4 +1,3 @@
-import config from "virtual:astro-resend-router/config";
 import { errorResponse } from "../errors.ts";
 import type { ParseRecipientResult } from "../types.ts";
 
@@ -26,16 +25,16 @@ export const parseRecipient = (recipient: string): ParseRecipientResult => {
 		};
 
 	if (p0 === "join") {
-		return config.allowPublicJoin
+		return p1
 			? {
 					ok: true,
 					action: p0,
-					...(p1 && { segment: p1 }),
+					segment: p1,
 					...(p2 && { topic: p2 }),
 				}
 			: {
 					ok: false,
-					res: errorResponse("Public join is disabled.", 403),
+					res: errorResponse("Missing segment", 400),
 				};
 	}
 

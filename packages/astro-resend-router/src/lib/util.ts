@@ -1,4 +1,14 @@
+import config from "virtual:astro-resend-router/config";
 import type { GetReceivingEmailResponseSuccess } from "resend";
+import type { LocalSegment } from "./types.ts";
+
+export const getLocalSegment = (name: string) => {
+	return config.segments.find((segment) => segment.name === name);
+};
+
+export const getLocalTopic = (name: string, localSegment: LocalSegment) => {
+	return localSegment.topics?.find((topic) => topic.name === name);
+};
 
 export const buildBroadcastName = (email: GetReceivingEmailResponseSuccess) => {
 	const suffix = `(${email.from})`;

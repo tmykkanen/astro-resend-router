@@ -1,20 +1,18 @@
-import config from "virtual:astro-resend-router/config";
 import { errorResponse } from "../errors.ts";
 import { resend } from "../resend.ts";
 import type {
 	ParseRecipientSuccess,
 	ValidateTargetsResults,
 } from "../types.ts";
+import { getLocalSegment, getLocalTopic } from "../util.ts";
 
 export const validateTargets = async (
 	parsed: ParseRecipientSuccess,
 ): Promise<ValidateTargetsResults> => {
 	const action = parsed.action ? { action: parsed.action } : {};
 
-	// Validate against local user config
-	const localSegment = config.segments.find(
-		(segment) => segment.name === parsed.segment,
-	);
+	// Validate segment against local user config
+	const localSegment = getLocalSegment(parsed.segment);
 
 	if (!localSegment)
 		return {
@@ -25,6 +23,7 @@ export const validateTargets = async (
 			),
 		};
 
+	// Verify local segment id matches resendId
 	const { data: remoteSegment, error: resendSegmentError } =
 		await resend.segments.get(localSegment.segmentId);
 
@@ -37,8 +36,9 @@ export const validateTargets = async (
 			),
 		};
 
+	// Validate topic against local user config
 	const localTopic = parsed.topic
-		? localSegment.topics?.find((topic) => topic.name === parsed.topic)
+		? getLocalTopic(parsed.topic, localSegment)
 		: undefined;
 
 	if (parsed.topic && !localTopic) {
@@ -55,10 +55,11 @@ export const validateTargets = async (
 		return {
 			ok: true,
 			...action,
-			segment: remoteSegment,
+			segment: localSegment,
 		};
 	}
 
+	// Verify remote topic id matches resendId
 	const { data: remoteTopic, error: topicError } = await resend.topics.get(
 		localTopic.topicId,
 	);
@@ -75,7 +76,7 @@ export const validateTargets = async (
 	return {
 		ok: true,
 		...action,
-		segment: remoteSegment,
-		topic: remoteTopic,
+		segment: localSegment,
+		topic: localTopic,
 	};
 };

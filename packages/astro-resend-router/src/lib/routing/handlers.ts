@@ -1,4 +1,3 @@
-import config from "virtual:astro-resend-router/config";
 import { errorResponse } from "../errors.ts";
 import { resend } from "../resend.ts";
 import type { ValidateTargetsSuccess } from "../types.ts";
@@ -8,13 +7,14 @@ export const handleJoin = async (
 	validTargets: ValidateTargetsSuccess,
 	requestFrom: string,
 ): Promise<Response> => {
-	const { segment, topic } = validTargets;
-
 	const { error: createContactError } = await resend.contacts.create({
 		email: requestFrom,
-		segments: segment?.id ? [{ id: segment?.id }] : [],
-		topics: topic?.id ? [{ id: topic?.id, subscription: "opt_in" }] : [],
+		segments: [{ id: validTargets.segment.segmentId }],
+		topics: validTargets.topic
+			? [{ id: validTargets.topic.topicId, subscription: "opt_in" }]
+			: [],
 	});
+
 	if (createContactError)
 		return errorResponse(
 			createContactError.message,
@@ -22,10 +22,14 @@ export const handleJoin = async (
 		);
 
 	const { data, error: confirmCreateContactError } = await resend.emails.send({
-		from: `${config.sendFromEmail.name} <${config.sendFromEmail.email}>`,
+		from: `${validTargets.segment.sendFromEmail.name} <${validTargets.segment.sendFromEmail.email}>`,
 		to: requestFrom,
 		subject: "You have been subscribed!",
-		html: `<p>Thank you for subscribing to segment ${segment?.name} ${topic ? ` and topic ${topic.name}` : ""}</p>`,
+		html: `<p>Thank you for subscribing to segment [${
+			validTargets.segment.name
+		}]${
+			validTargets.topic ? ` and topic [${validTargets.topic.name}]` : ""
+		}</p>`,
 	});
 
 	if (confirmCreateContactError)
@@ -63,9 +67,9 @@ export const handleBroadcast = async (
 
 	const { data: broadcast, error: createBroadcastError } =
 		await resend.broadcasts.create({
-			segmentId: validTargets.segment?.id ?? "",
-			...(validTargets.topic?.id && { topicId: validTargets.topic.id }),
-			from: `${config.sendFromEmail.name} <${config.sendFromEmail.email}>`,
+			segmentId: validTargets.segment.segmentId,
+			...(validTargets.topic && { topicId: validTargets.topic.topicId }),
+			from: `${validTargets.segment.sendFromEmail.name} <${validTargets.segment.sendFromEmail.email}>`,
 			subject: email.subject,
 			html: email.html ?? "",
 			text: email.text ?? "",

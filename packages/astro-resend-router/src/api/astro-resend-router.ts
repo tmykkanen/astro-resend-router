@@ -51,17 +51,18 @@ export const POST: APIRoute = async ({ request }) => {
 		const parsed = parseRecipient(recipient);
 		if (!parsed.ok) return parsed.res;
 
-		// Parse recipient address for routing and guard against disabled allowPublicJoin and missing segment
-
 		// Validate segment / topic against user config and Resend data
 		const validTargets = await validateTargets(parsed);
 		if (!validTargets.ok) return validTargets.res;
 
 		// Handle join action
-		if (validTargets.action === "join") return handleJoin(validTargets, sender);
+		if (validTargets.action === "join")
+			return validTargets.segment.allowPublicJoin
+				? handleJoin(validTargets, sender)
+				: errorResponse("Public join is disabled", 200);
 
 		// Verify sender has broadcast permissions
-		const verifiedPermissions = await verifyPermissions(sender);
+		const verifiedPermissions = await verifyPermissions(validTargets, sender);
 		if (!verifiedPermissions.ok) return verifiedPermissions.res;
 
 		// Create and send broadcast

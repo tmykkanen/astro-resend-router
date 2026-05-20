@@ -1,53 +1,43 @@
-// import type { z } from "astro/zod";
-import type {
-	GetSegmentResponseSuccess,
-	GetTopicResponseSuccess,
-	WebhookEventPayload,
-} from "resend";
-// import type { UserConfigSchema } from "./schemas.ts";
+import type { WebhookEventPayload } from "resend";
 
-// export type UserConfig = z.infer<typeof UserConfigSchema>;
-
-export type UserConfig = {
+/**
+ * Topic within a segment. Matched by an additional dot-separated suffix in the address.
+ * @example
+ * // Email sent to pfi.newsletter@domain.com routes to the 'newsletter' topic in 'pfi'
+ */
+type LocalTopic = {
 	/**
-	 * Resend audience segments used to route incoming emails.
-	 * Each segment is matched by the local part of the recipient address.
-	 * @example
-	 * segments: [{ name: 'pfi', segmentId: '...' }]
-	 * // Email sent to pfi@domain.com routes to the 'pfi' segment
+	 * Identifier for this topic. Matched as a dot-separated suffix after the segment name.
+	 * Does not need to match the topic name in Resend.
+	 * @example 'newsletter' // matches pfi.newsletter@domain.com
 	 */
-	segments: {
-		/**
-		 * Identifier for this segment. Used to match the local part of the recipient address.
-		 * Does not need to match the segment name in Resend.
-		 * @example 'pfi' // matches pfi@domain.com
-		 */
-		name: string;
-		/**
-		 * Resend audience segment ID.
-		 * Find it by navigating to Segments and clicking `...` next to the target segment.
-		 */
-		segmentId: string;
-		/**
-		 * Topics within this segment. Matched by an additional dot-separated suffix in the address.
-		 * @example
-		 * // Email sent to pfi.newsletter@domain.com routes to the 'newsletter' topic in 'pfi'
-		 */
-		topics?: {
-			/**
-			 * Identifier for this topic. Matched as a dot-separated suffix after the segment name.
-			 * Does not need to match the topic name in Resend.
-			 * @example 'newsletter' // matches pfi.newsletter@domain.com
-			 */
-			name: string;
-			/**
-			 * Resend topic ID.
-			 * Find it by navigating to Topics and clicking `...` next to the target topic.
-			 */
-			topicId: string;
-		}[];
-	}[];
-	/** The sender identity used for outgoing broadcasts. */
+	name: string;
+	/**
+	 * Resend topic ID.
+	 * Find it by navigating to Topics and clicking `...` next to the target topic.
+	 */
+	topicId: string;
+};
+
+/**
+ * Resend audience segment used to route incoming emails.
+ * Each segment is matched by the local part of the recipient address.
+ * @example
+ * // Email sent to pfi@domain.com routes to the 'pfi' segment
+ */
+export type LocalSegment = {
+	/**
+	 * Identifier for this segment. Used to match the local part of the recipient address.
+	 * Does not need to match the segment name in Resend.
+	 * @example 'pfi' // matches pfi@domain.com
+	 */
+	name: string;
+	/**
+	 * Resend audience segment ID.
+	 * Find it by navigating to Segments and clicking `...` next to the target segment.
+	 */
+	segmentId: string;
+	/** The sender identity used for outgoing broadcasts from this segment/topics. */
 	sendFromEmail: {
 		/** Display name shown in the recipient's email client. */
 		name: string;
@@ -55,8 +45,7 @@ export type UserConfig = {
 		email: string;
 	};
 	/**
-	 * List of email addresses permitted to trigger broadcasts.
-	 * API will also check if contact on Resend has authorized_senders = 'true'
+	 * List of email addresses permitted to trigger broadcasts from this segment/topics.
 	 */
 	authorizedSenders?: string[];
 	/**
@@ -67,6 +56,23 @@ export type UserConfig = {
 	 * @default false
 	 */
 	allowPublicJoin?: boolean;
+	/**
+	 * Array of topics within this segment. Matched by an additional dot-separated suffix in the address.
+	 * @example
+	 * // Email sent to pfi.newsletter@domain.com routes to the 'newsletter' topic in 'pfi'
+	 */
+	topics?: LocalTopic[];
+};
+
+export type UserConfig = {
+	/**
+	 * Resend audience segments used to route incoming emails.
+	 * Each segment is matched by the local part of the recipient address.
+	 * @example
+	 * segments: [{ name: 'pfi', segmentId: '...' }]
+	 * // Email sent to pfi@domain.com routes to the 'pfi' segment
+	 */
+	segments: LocalSegment[];
 };
 
 type HandleError = {
@@ -82,7 +88,7 @@ type ParseRecipientError = HandleError;
 export type ParseRecipientSuccess = {
 	ok: true;
 	action?: "join";
-	segment?: string;
+	segment: string;
 	topic?: string;
 };
 export type ParseRecipientResult = ParseRecipientError | ParseRecipientSuccess;
@@ -91,8 +97,8 @@ type ValidateTargetsError = HandleError;
 export type ValidateTargetsSuccess = {
 	ok: true;
 	action?: "join";
-	segment?: GetSegmentResponseSuccess;
-	topic?: GetTopicResponseSuccess;
+	segment: LocalSegment;
+	topic?: LocalTopic;
 };
 export type ValidateTargetsResults =
 	| ValidateTargetsError
