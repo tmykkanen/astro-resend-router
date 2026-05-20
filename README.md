@@ -7,7 +7,7 @@ Astro Resend Router provides a single API endpoint that lets:
 - Anyone join a configured list by sending an email.
 - Authorized senders broadcast messages to all subscribers.
 
-To see how to get started, check out the [package README](./package/README.md)
+To see how to get started, check out the [package README](./packages/astro-resend-router/README.md)
 
 ## Licensing
 

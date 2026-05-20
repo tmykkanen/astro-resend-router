@@ -6,7 +6,7 @@ An [Astro integration](https://docs.astro.build/en/guides/integrations-guide/) t
 
 ### Prerequisites
 
-- [Resend](https://resend.com/) account
+- [Resend](https://resend.com/) account with a [verified domain](https://resend.com/docs/dashboard/domains/introduction#verifying-a-domain)
 
 ### Installation
 
@@ -54,15 +54,13 @@ export default defineConfig({
 
 #### Configure Resend
 
-1. [Verify your domain](https://resend.com/docs/dashboard/domains/introduction#verifying-a-domain)
-
-2. [Create an API key](https://resend.com/docs/dashboard/api-keys/introduction#what-is-an-api-key) and add to your `.env`:
+1. [Create an API key](https://resend.com/docs/dashboard/api-keys/introduction#what-is-an-api-key) and add to your `.env`:
 
 ```bash
 RESEND_API_KEY=your_api_key
 ```
 
-3. [Create a webhook](https://resend.com/docs/webhooks/introduction):
+2. [Create a webhook](https://resend.com/docs/webhooks/introduction):
 
 - Endpoint URL: `your_domain/api/astro-resend-router`
 - Events: `email.received`
@@ -72,28 +70,13 @@ RESEND_API_KEY=your_api_key
 RESEND_WEBHOOK_SECRET=your_webhook_signing_secret
 ```
 
-4. Add contacts to your [Audience](https://resend.com/docs/dashboard/audiences/introduction#your-resend-audience)
+3. Add contacts to your [Audience](https://resend.com/docs/dashboard/audiences/introduction#your-resend-audience)
 
-5. Configure [Segments](https://resend.com/docs/dashboard/segments/introduction#managing-segments) and [Topics](https://resend.com/docs/knowledge-base/why-use-topics#why-and-when-to-use-topics)
+4. Configure [Segments](https://resend.com/docs/dashboard/segments/introduction#managing-segments) and [Topics](https://resend.com/docs/knowledge-base/why-use-topics#why-and-when-to-use-topics)
 
 #### Configure the integration options
 
-```typescript
-export default defineConfig({
-  integrations: [
-    resendRouter({
-      segments: [...],
-      sendFromEmail: {...},
-      authorizedSenders: [...],
-      allowPublicJoin: ...,
-    })
-  ]
-});
-```
-
-**Options**
-
-`segments` (required): Defines how incoming emails are routed.
+##### `segments`: Defines how incoming emails are routed.
 
 - The local part of the email address determines the segment:
   - `pfi@yourdomain.com` → `pfi` segment
@@ -101,40 +84,75 @@ export default defineConfig({
   - `pfi.newsletter@yourdomain.com` → `newsletter` topic in `pfi`
 
 ```typescript
-segments: [
-  {
-    name: "pfi",
-    segmentId: "segment_id_from_resend",
-    topics: [
-      {
-        name: "newsletter",
-        topicId: "topic_id_from_resend",
-      },
-    ],
-  },
-];
+export default defineConfig({
+  integrations: [
+    resendRouter({
+      segments: [
+        {
+          name: 'pfi',
+          segmentId: 'segment_id_from_resend',
+
+          sendFromEmail: {
+            name: 'Your Name',
+            email: 'no-reply@yourdomain.com'
+          }
+
+          authorizedSenders: ['you@yourdomain.com'],
+
+          allowPublicJoin: true,
+
+          topics: [
+            {
+              name: 'newsletter',
+              topicId: 'topic_id_from_resend'
+            }
+          ]
+        }
+      ]
+    })
+  ]
+});
 ```
 
-`sendFromEmail` (required): Sender identity used for outgoing broadcasts.
+##### Segment options
 
-- email must be a verified sender in Resend
+`name`: Identifier used to match the recipient address.
+
+- Does not need to match the segment name in Resend.
+
+```typescript
+name: "pfi"; // matches pfi@yourdomain.com
+```
+
+`segmentId`: Resend audience segment ID.
+
+- Find it in Resend by navigating to Segments and clicking `...` next to the target segment.
+
+```typescript
+segmentId: "segment_id_from_resend";
+```
+
+`sendFromEmail`: Sender identity used for outgoing broadcasts from this segment and its topics.
+
+- `name` is the display name shown in the recipient's email client.
+- `email` must use a [domain verified in Resend.](https://resend.com/docs/dashboard/domains/introduction#verifying-a-domain)
 
 ```typescript
 sendFromEmail: {
-  name: 'Your App',
-  email: 'no-reply@yourdomain.com'
-}
+  name: "Your Name",
+  email: "no-reply@yourdomain.com",
+};
 ```
 
-`authorizedSenders` (optional): List of email addresses allowed to send broadcasts.
+`authorizedSenders` (optional): List of email addresses allowed to send broadcasts for this segment/topics.
 
-- Integration also checks [Contact Properties](https://resend.com/docs/dashboard/audiences/properties#contact-properties) in Resend for `authorized_senders = 'true'`
+- The integration also checks [Contact Properties](https://resend.com/docs/dashboard/audiences/properties#contact-properties) for `authorized_senders = "true"`
 
 ```typescript
 authorizedSenders: ["you@yourdomain.com"];
 ```
 
-`allowPublicJoin` (optional): Allow users to subscribe by sending an email.
+`allowPublicJoin` (optional): Allow anyone to self-subscribe by emailing a `join`-prefixed address.
 
 - Default: `false`
 - Examples:
@@ -143,6 +161,20 @@ authorizedSenders: ["you@yourdomain.com"];
 
 ```typescript
 allowPublicJoin: true;
+```
+
+`topics` (optional): Defines topics within a segment.
+
+- `name`: Identifier matched after the segment name. Does not need to match the topic name in Resend.
+- `topicId`: Find it in Resend by navigating to Topics and clicking ... next to the target topic.
+
+```typescript
+topics: [
+  {
+    name: "newsletter",
+    topicId: "topic_id_from_resend",
+  },
+];
 ```
 
 #### Routing Summary
@@ -174,6 +206,12 @@ export default defineConfig({
 ```
 
 ## Contributing
+
+### Issues
+
+Submit issues to [astro-resend-router/issues](https://github.com/tmykkanen/astro-resend-router/issues).
+
+### Development
 
 This package is structured as a monorepo:
 
