@@ -1,5 +1,13 @@
 # astro-resend-router
 
+## 1.0.1
+
+### Patch Changes
+
+- [`0f05dc9`](https://github.com/tmykkanen/astro-resend-router/commit/0f05dc91291f8249995f156acf8b9cdf9a58cb05) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Bug fix for customEmailFooter
+  - moved validation to zod schema for better handling
+  - fixed error in passing defaults if customEmailFooter is unsent
+
 ## 1.0.0
 
 ### Major Changes
