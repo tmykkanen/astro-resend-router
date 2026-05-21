@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 1.0.1
+
+### Patch Changes
+
+- [`d9103f8`](https://github.com/tmykkanen/astro-resend-router/commit/d9103f889cceef7ab6578d008b3340644fd2e8bb) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Bug fix for customEmailFooter
+
 ## 1.0.0
 
 ### Major Changes
