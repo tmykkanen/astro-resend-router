@@ -1,5 +1,17 @@
 # astro-resend-router
 
+## 1.0.0
+
+### Major Changes
+
+- [`88f993c`](https://github.com/tmykkanen/astro-resend-router/commit/88f993c2ce7584db86895a0ed08fb63e6d7eee3d) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Breaking Changes - API finalized and ready for major release
+
+  fix: breaking changes to config
+  - Changed 'name' to segmentName and segmentIdentifier to enable display friendly name
+  - moved files / functions to better separate concerns
+  - improved error handling and logging
+  - added default email footer with unsubscribe link and support for custom footer
+
 ## 0.6.0
 
 ### Minor Changes
