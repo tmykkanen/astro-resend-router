@@ -19,8 +19,6 @@ export const handleBroadcast = async (
 		);
 
 	// create & send broadcast
-	const name = buildBroadcastName(email);
-
 	const { data: broadcast, error: createBroadcastError } =
 		await resend.broadcasts.create({
 			segmentId: validTargets.segment.segmentId,
@@ -29,7 +27,7 @@ export const handleBroadcast = async (
 			subject: email.subject,
 			html: buildEmail(email.html ?? "", validTargets),
 			replyTo: email.from,
-			name,
+			name: buildBroadcastName(email),
 			send: true,
 		});
 

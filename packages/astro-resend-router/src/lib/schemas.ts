@@ -70,8 +70,21 @@ export const UserConfigSchema = z.object({
 				 * `
 				 * ```
 				 */
-				// TODO: Add validation
-				customEmailFooter: z.string().default(""),
+				customEmailFooter: z
+					.string()
+					.default("")
+					.refine((html) => html === "" || html.toLowerCase().includes("<a"), {
+						message: "Footer must include at least one link (<a>)",
+					})
+					.refine(
+						(html) =>
+							html === "" ||
+							html.toLowerCase().includes("{{{resend_unsubscribe_url}}}"),
+						{
+							message:
+								"Footer must include {{{RESEND_UNSUBSCRIBE_URL}}} for compliance.",
+						},
+					),
 				/**
 				 * Topics within this segment. Matched by an additional dot-separated suffix in the address.
 				 * @example

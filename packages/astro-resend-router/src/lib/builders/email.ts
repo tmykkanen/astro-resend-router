@@ -1,40 +1,13 @@
-import { throwError } from "../astro-http-utils.ts";
 import type { ValidateTargetsSuccess } from "../types.ts";
 
 export const buildEmail = (
 	content: string,
 	validatedTargets: ValidateTargetsSuccess,
 ) => {
-	const footer = validateEmailFooter(
-		validatedTargets.segment.customEmailFooter ??
-			defaultEmailFooter(validatedTargets),
-	);
-
+	const footer =
+		validatedTargets.segment.customEmailFooter ||
+		defaultEmailFooter(validatedTargets);
 	return `${content} ${footer}`;
-};
-
-export const validateEmailFooter = (html: string) => {
-	if (!html || typeof html !== "string") {
-		return throwError("Invalid customEmailFooter", "Not a valid string");
-	}
-
-	const normalized = html.toLowerCase();
-
-	if (!normalized.includes("<a")) {
-		return throwError(
-			"Invalid customEmailFooter",
-			"Footer must include at least one link (<a>)",
-		);
-	}
-
-	if (!normalized.includes("{{{resend_unsubscribe_url}}}")) {
-		return throwError(
-			"Invalid customEmailFooter",
-			"Footer must include {{{RESEND_UNSUBSCRIBE_URL}}} for compliance.",
-		);
-	}
-
-	return html;
 };
 
 const defaultEmailFooter = (validatedTargets: ValidateTargetsSuccess) => {
