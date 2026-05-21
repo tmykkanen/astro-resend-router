@@ -9,12 +9,13 @@
 
 import { RESEND_API_KEY } from "astro:env/server";
 import { Resend } from "resend";
+import { throwError } from "./astro-http-utils.ts";
 
 // Validate that the API key is configured
 if (!RESEND_API_KEY) {
-	throw new Error(
-		"Missing RESEND_API_KEY environment variable. " +
-			"Get your API key from https://resend.com/api-keys",
+	throwError(
+		"Missing RESEND_API_KEY environment variable",
+		"Get your API key from https://resend.com/api-keys",
 	);
 }
 

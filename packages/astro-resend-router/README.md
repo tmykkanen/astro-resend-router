@@ -89,12 +89,13 @@ export default defineConfig({
     resendRouter({
       segments: [
         {
-          name: 'pfi',
+          segmentName: 'Prairie Forge',
+          segmentIdentifier: 'pfi',
           segmentId: 'segment_id_from_resend',
 
           sendFromEmail: {
             name: 'Your Name',
-            email: 'no-reply@yourdomain.com'
+            email: 'hello@yourdomain.com'
           }
 
           authorizedSenders: ['you@yourdomain.com'],
@@ -103,7 +104,8 @@ export default defineConfig({
 
           topics: [
             {
-              name: 'newsletter',
+              topicName: 'Prairie Forge Newsletter',
+              topicIdentifier: 'newsletter',
               topicId: 'topic_id_from_resend'
             }
           ]
@@ -116,12 +118,20 @@ export default defineConfig({
 
 ##### Segment options
 
-`name`: Identifier used to match the recipient address.
+`segmentName`: Display-friendly name.
 
 - Does not need to match the segment name in Resend.
 
 ```typescript
-name: "pfi"; // matches pfi@yourdomain.com
+segmentName: "Prairie Forge"; // matches pfi@yourdomain.com
+```
+
+`segmentIdentifier`: Identifier used to match the recipient address.
+
+- Does not need to match the segment name in Resend.
+
+```typescript
+segmentIdentifier: "pfi"; // matches pfi@yourdomain.com
 ```
 
 `segmentId`: Resend audience segment ID.
@@ -163,14 +173,37 @@ authorizedSenders: ["you@yourdomain.com"];
 allowPublicJoin: true;
 ```
 
+`customEmailFooter` (optional): Custom HTML footer to replace the default footer appended to every broadcast email.
+
+⚠️ Important:
+
+- Must be valid HTML (email-safe markup recommended)
+- Should include a Resend unsubscribe placeholder if required: {{{RESEND_UNSUBSCRIBE_URL}}}
+- Will be appended as-is (no sanitization or wrapping is applied)
+
+```ts
+customEmailFooter: `
+  <hr style="margin-top:24px;border:none;border-top:1px solid #444;" />
+  <p style="font-size:12px; color:#666; line-height:1.5; margin-top:16px;">
+  You’re receiving this because you subscribed to our newsletter.<br />
+	Want to stop receiving these emails?<br />
+	  <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#666;">
+			Unsubscribe instantly.
+		</a>
+	</p>
+	`;
+```
+
 `topics` (optional): Defines topics within a segment.
 
-- `name`: Identifier matched after the segment name. Does not need to match the topic name in Resend.
+- `topicName`: Display-friendly name.
+- `topicIdentifier`: Identifier matched after the segment name. Does not need to match the topic name in Resend.
 - `topicId`: Find it in Resend by navigating to Topics and clicking ... next to the target topic.
 
 ```typescript
 topics: [
   {
+    topicName: "Prairie Forge Newsletter",
     name: "newsletter",
     topicId: "topic_id_from_resend",
   },

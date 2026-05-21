@@ -1,4 +1,4 @@
-import { errorResponse } from "../errors.ts";
+import { errorResponse } from "../astro-http-utils.ts";
 import { resend } from "../resend.ts";
 import type {
 	ValidateTargetsSuccess,
