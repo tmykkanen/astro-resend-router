@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 1.0.0
+
+### Major Changes
+
+- [`3bc0b68`](https://github.com/tmykkanen/astro-resend-router/commit/3bc0b6895461e6b58f4551565bf9a4fe77e12a0c) Thanks [@tmykkanen](https://github.com/tmykkanen)! - API and project structure finalized to production ready
+
 ## 0.6.0
 
 ### Minor Changes
