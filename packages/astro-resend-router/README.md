@@ -186,6 +186,31 @@ topics: [
 | `join.pfi@yourdomain.com`            | Subscribe to segment `pfi` (if `allowPublicJoin: true`)      |
 | `join.pfi.newsletter@yourdomain.com` | Subscribe to topic `newsletter` (if `allowPublicJoin: true`) |
 
+#### Added privacy for email addresses (optional)
+
+To avoid committing email addresses to a public repo, consider storing authorized senders in your `.env` file.
+
+```bash
+WHATEVER_KEY_YOU_WANT=you@yourdomain.com,another_user@yourdomain.com
+```
+
+Then import to astro.config.mjs:
+
+```typescript
+const { WHATEVER_KEY_YOU_WANT } = loadEnv("", process.cwd(), "");
+
+export default defineConfig({
+  integrations: [
+    resendRouter({
+      segments: [
+          ...
+          authorizedSenders: WHATEVER_KEY_YOU_WANT?.split(",").map(e => e.trim()) ?? []
+      ]
+    })
+  ]
+});
+```
+
 #### Local testing (optional)
 
 1. Set up [Ngrok](https://ngrok.com/) (or a similar tunneling tool).
