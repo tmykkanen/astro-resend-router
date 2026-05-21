@@ -1,21 +1,18 @@
 import type { APIRoute } from "astro";
-import { errorResponse } from "../lib/errors.ts";
-import { handleBroadcast, handleJoin } from "../lib/routing/handlers.ts";
+import {
+	errorResponse,
+	successResponse,
+	warn,
+} from "../lib/astro-http-utils.ts";
+import { handleBroadcast } from "../lib/handlers/broadcast.ts";
+import { handleJoin } from "../lib/handlers/join.ts";
 import { verifyPermissions } from "../lib/routing/permissions.ts";
 import { parseRecipient } from "../lib/webhook/parse.ts";
 import { validateTargets } from "../lib/webhook/validate.ts";
 import { verifyWebhook } from "../lib/webhook/verify.ts";
 
 export const GET: APIRoute = async () => {
-	console.log("API Route [astro-resend-router] is live");
-	return new Response(
-		JSON.stringify({
-			message: "API Route [astro-resend-router] is live",
-		}),
-		{
-			status: 200,
-		},
-	);
+	return successResponse("API Route is live at /api/astro-resend-router", 200);
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -38,9 +35,8 @@ export const POST: APIRoute = async ({ request }) => {
 		if (!recipient)
 			return errorResponse("Missing recipient email address", 400);
 		if (recipients.length > 1) {
-			console.warn(
-				"Multiple recipients received; only processing first:",
-				recipients,
+			warn(
+				`Multiple recipients received; only processing first.\nRecipients: ${recipients}`,
 			);
 		}
 
@@ -68,7 +64,6 @@ export const POST: APIRoute = async ({ request }) => {
 		// Create and send broadcast
 		return handleBroadcast(verifiedPayload.data.email_id, validTargets);
 	} catch (err) {
-		console.error("Webhook handler error:", err);
-		return errorResponse("Internal server error", 500);
+		return errorResponse(`Unkown error: ${err}`, 500);
 	}
 };

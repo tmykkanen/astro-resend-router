@@ -1,4 +1,4 @@
-import { errorResponse } from "../errors.ts";
+import { errorResponse } from "../astro-http-utils.ts";
 import type { ParseRecipientResult } from "../types.ts";
 
 export const parseRecipient = (recipient: string): ParseRecipientResult => {
@@ -29,8 +29,8 @@ export const parseRecipient = (recipient: string): ParseRecipientResult => {
 			? {
 					ok: true,
 					action: p0,
-					segment: p1,
-					...(p2 && { topic: p2 }),
+					segmentIdentifier: p1,
+					...(p2 && { topicIdentifier: p2 }),
 				}
 			: {
 					ok: false,
@@ -40,7 +40,7 @@ export const parseRecipient = (recipient: string): ParseRecipientResult => {
 
 	return {
 		ok: true,
-		segment: p0,
-		...(p1 && { topic: p1 }),
+		segmentIdentifier: p0,
+		...(p1 && { topicIdentifier: p1 }),
 	};
 };

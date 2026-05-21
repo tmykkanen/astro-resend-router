@@ -1,31 +1,23 @@
 import type { AstroIntegration } from "astro";
 import { envField } from "astro/config";
-import { AstroError } from "astro/errors";
+import { info, throwError } from "./lib/astro-http-utils.ts";
 import { UserConfigSchema } from "./lib/schemas.ts";
 import type { UserConfig } from "./lib/types.ts";
 import { createVM } from "./lib/vite/virtual-module.ts";
 
 export function integration(userConfig: UserConfig): AstroIntegration {
 	if (userConfig === undefined) {
-		throw new AstroError(
-			"[astro-resend-router] Missing configuration",
-			`Did you forget to call the integration?
-
-         🤦‍♂️ Incorrect:
-         resendRouter
-
-         ✅ Correct:
-         resendRouter({
-           segments: [...]
-         })`,
+		return throwError(
+			"Missing configuration",
+			"You must configure resendRouter({segments: [...]}) — See https://github.com/tmykkanen/astro-resend-router/blob/main/packages/astro-resend-router/README.md",
 		);
 	}
 
 	const parsedUserConfig = UserConfigSchema.safeParse(userConfig);
 
 	if (!parsedUserConfig.success) {
-		throw new AstroError(
-			"[astro-resend-router] Invalid configuration — your integration config is missing required fields or is malformed.",
+		return throwError(
+			"Invalid configuration — your integration config is missing required fields or is malformed.",
 			`Issues:\n${parsedUserConfig.error.issues
 				.map(
 					(issue) => `  • ${issue.path.join(".") || "root"}: ${issue.message}`,
@@ -63,8 +55,8 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 					prerender: false,
 				});
 			},
-			"astro:config:done": ({ logger }) => {
-				logger.info(
+			"astro:config:done": () => {
+				info(
 					"API endpoint successfully injected. Access at /api/astro-resend-router",
 				);
 			},
