@@ -1,5 +1,15 @@
 # astro-resend-router
 
+## 1.1.0
+
+### Minor Changes
+
+- [`7ef8970`](https://github.com/tmykkanen/astro-resend-router/commit/7ef8970cb239eba3fdfd477c451bf7ef45b704c4) Thanks [@tmykkanen](https://github.com/tmykkanen)! - restructured file structure and error handling for more consistency and to enable a GET route with api status
+
+### Patch Changes
+
+- [`33b6607`](https://github.com/tmykkanen/astro-resend-router/commit/33b6607e93302042d73cd673b84af40015955e4f) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Fix: topicName should not be normalized
+
 ## 1.0.1
 
 ### Patch Changes
