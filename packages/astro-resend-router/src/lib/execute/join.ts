@@ -1,11 +1,15 @@
-import { errorResponse, successResponse } from "../astro-http-utils.ts";
+import type {
+	JoinError,
+	JoinResult,
+	Result,
+	ValidTargets,
+} from "../contracts/types.ts";
 import { resend } from "../resend.ts";
-import type { ValidateTargetsSuccess } from "../types.ts";
 
 export const handleJoin = async (
-	validTargets: ValidateTargetsSuccess,
+	validTargets: ValidTargets,
 	requestFrom: string,
-): Promise<Response> => {
+): Promise<Result<JoinResult, JoinError>> => {
 	const { error: createContactError } = await resend.contacts.create({
 		email: requestFrom,
 		segments: [{ id: validTargets.segment.segmentId }],
@@ -15,10 +19,14 @@ export const handleJoin = async (
 	});
 
 	if (createContactError)
-		return errorResponse(
-			createContactError.message,
-			createContactError.statusCode ?? 500,
-		);
+		return {
+			ok: false,
+			error: {
+				code: "create_contact_error",
+				message: createContactError.message,
+				statusCode: createContactError.statusCode ?? 500,
+			},
+		};
 
 	const { data, error: confirmCreateContactError } = await resend.emails.send({
 		from: `${validTargets.segment.sendFromEmail.name} <${validTargets.segment.sendFromEmail.email}>`,
@@ -32,13 +40,19 @@ export const handleJoin = async (
 	});
 
 	if (confirmCreateContactError)
-		return errorResponse(
-			confirmCreateContactError.message,
-			confirmCreateContactError.statusCode ?? 500,
-		);
+		return {
+			ok: false,
+			error: {
+				code: "send_confirmation_error",
+				message: confirmCreateContactError.message,
+				statusCode: confirmCreateContactError.statusCode ?? 500,
+			},
+		};
 
-	return successResponse(
-		`Successfully created contact for ${requestFrom}. Contact id: ${data.id}`,
-		200,
-	);
+	return {
+		ok: true,
+		value: {
+			message: `Successfully created contact for ${requestFrom}. Contact id: ${data.id}`,
+		},
+	};
 };

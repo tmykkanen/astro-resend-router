@@ -1,16 +1,13 @@
-import type { ValidateTargetsSuccess } from "../types.ts";
+import type { ValidTargets } from "../contracts/types.ts";
 
-export const buildEmail = (
-	content: string,
-	validatedTargets: ValidateTargetsSuccess,
-) => {
+export const buildEmail = (content: string, validatedTargets: ValidTargets) => {
 	const footer =
 		validatedTargets.segment.customEmailFooter ||
 		defaultEmailFooter(validatedTargets);
 	return `${content} ${footer}`;
 };
 
-const defaultEmailFooter = (validatedTargets: ValidateTargetsSuccess) => {
+const defaultEmailFooter = (validatedTargets: ValidTargets) => {
 	return `
   <hr style="margin-top:24px;border:none;border-top:1px solid #444;" />
 

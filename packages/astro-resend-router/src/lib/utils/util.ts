@@ -1,5 +1,5 @@
 import config from "virtual:astro-resend-router/config";
-import type { LocalSegment } from "./types.ts";
+import type { LocalSegment } from "../contracts/config.types.ts";
 
 export const getLocalSegment = (identifier: string) => {
 	return config.segments.find(

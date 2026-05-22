@@ -1,11 +1,9 @@
-import type { WebhookEventPayload } from "resend";
-
 /**
  * Topic within a segment. Matched by an additional dot-separated suffix in the address.
  * @example
  * // Email sent to pfi.newsletter@domain.com routes to the 'newsletter' topic in 'pfi'
  */
-type LocalTopic = {
+export type LocalTopic = {
 	/**
 	 * Display-friendly name for this topic.
 	 * Does not need to match the topic name in Resend.
@@ -110,38 +108,3 @@ export type UserConfig = {
 	 */
 	segments: LocalSegment[];
 };
-
-type HandleError = {
-	ok: false;
-	res: Response;
-};
-
-type VerifyWebhookError = HandleError;
-type VerifyWebhookSuccess = { ok: true; payload: WebhookEventPayload };
-export type VerifyWebhookResult = VerifyWebhookSuccess | VerifyWebhookError;
-
-type ParseRecipientError = HandleError;
-export type ParseRecipientSuccess = {
-	ok: true;
-	action?: "join";
-	segmentIdentifier: string;
-	topicIdentifier?: string;
-};
-export type ParseRecipientResult = ParseRecipientError | ParseRecipientSuccess;
-
-type ValidateTargetsError = HandleError;
-export type ValidateTargetsSuccess = {
-	ok: true;
-	action?: "join";
-	segment: LocalSegment;
-	topic?: LocalTopic;
-};
-export type ValidateTargetsResults =
-	| ValidateTargetsError
-	| ValidateTargetsSuccess;
-
-type VerifyPermissionsError = HandleError;
-type VerifyPermissionsSuccess = { ok: true };
-export type VerifyPermissionsResult =
-	| VerifyPermissionsError
-	| VerifyPermissionsSuccess;

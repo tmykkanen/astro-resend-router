@@ -1,14 +1,14 @@
-import { errorResponse } from "../astro-http-utils.ts";
-import { resend } from "../resend.ts";
 import type {
-	ValidateTargetsSuccess,
-	VerifyPermissionsResult,
-} from "../types.ts";
+	PermissionsError,
+	Result,
+	ValidTargets,
+} from "../contracts/types.ts";
+import { resend } from "../resend.ts";
 
 export const verifyPermissions = async (
-	validTargets: ValidateTargetsSuccess,
+	validTargets: ValidTargets,
 	requestFrom: string,
-): Promise<VerifyPermissionsResult> => {
+): Promise<Result<void, PermissionsError>> => {
 	const email = requestFrom.toLowerCase();
 
 	// Check for authorizedSenders configured in astro.config.mjs
@@ -23,7 +23,11 @@ export const verifyPermissions = async (
 	if (error)
 		return {
 			ok: false,
-			res: errorResponse(error.message, error.statusCode ?? 500),
+			error: {
+				code: "fetch_remote_contacts_error",
+				message: error.message,
+				statusCode: error.statusCode ?? 500,
+			},
 		};
 
 	if (contact?.properties?.authorized_sender?.value === "true")
@@ -31,6 +35,10 @@ export const verifyPermissions = async (
 
 	return {
 		ok: false,
-		res: errorResponse(`Unauthorized sender: ${requestFrom}`, 200),
+		error: {
+			code: "unauthorized_sender",
+			message: `Unauthorized sender: ${requestFrom}`,
+			statusCode: 200,
+		},
 	};
 };
