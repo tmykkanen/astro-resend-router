@@ -98,7 +98,7 @@ export const UserConfigSchema = z.object({
 							 * Does not need to match the topic name in Resend.
 							 * @example 'PFI Newsletter'
 							 */
-							topicName: z.string().transform((s) => s.toLowerCase()),
+							topicName: z.string(),
 							/**
 							 * Identifier for this topic. Matched as a dot-separated suffix after the segment name.
 							 * Does not need to match the topic name in Resend.
