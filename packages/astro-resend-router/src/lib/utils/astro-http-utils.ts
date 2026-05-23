@@ -1,5 +1,4 @@
 import { AstroError } from "astro/errors";
-import pc from "picocolors";
 import type {
 	ExecutionError,
 	ExecutionResult,
@@ -18,7 +17,7 @@ type JSONResponse<T = unknown> = {
 };
 
 const log = (message: string, level: "log" | "warn" | "error" = "log") => {
-	console[level](`${pc.blue(PREFIX)} ${message}`);
+	console[level](`\x1b[34m${PREFIX}\x1b[0m ${message}`);
 };
 
 /**
