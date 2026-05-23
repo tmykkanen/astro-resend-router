@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 1.1.1
+
+### Patch Changes
+
+- [`1944eb1`](https://github.com/tmykkanen/astro-resend-router/commit/1944eb1cd61e52d866fc069710aa97df24e47927) Thanks [@tmykkanen](https://github.com/tmykkanen)! - removed dependency picocolors
+
 ## 1.1.0
 
 ### Minor Changes
