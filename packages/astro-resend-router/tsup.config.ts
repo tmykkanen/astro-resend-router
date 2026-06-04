@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+
 import { peerDependencies } from "./package.json";
 
 export default defineConfig((options) => {
