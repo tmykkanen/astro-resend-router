@@ -11,11 +11,3 @@ type PCOApiErrorCodes = "pco_api_error" | "pco_api_empty_response";
 export type FetchEmailsError = Status<PCOApiErrorCodes | "invalid_email_data">;
 
 export type FetchPeopleError = Status<PCOApiErrorCodes | "invalid_people_data">;
-
-export type HydratedPerson = {
-	id: string;
-	firstName?: string;
-	lastName?: string;
-	updated?: string;
-	email: string;
-};

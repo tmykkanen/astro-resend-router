@@ -1,25 +1,9 @@
 import { err, ok } from "#/lib/api/index.ts";
-import {
-	fetchEmails,
-	fetchPeople,
-	hydratePeopleWithEmails,
-} from "#/lib/planning-center/index.ts";
 import { fetchResendContactsList } from "#/lib/resend/index.ts";
 
-export const syncContacts = async () => {
-	// * Fetch People and Emails from PCO
-	const pcoPeople = await fetchPeople();
-	if (!pcoPeople.ok) return err(pcoPeople.error);
+import type { SourceContact } from "./sync.types.ts";
 
-	const pcoEmails = await fetchEmails();
-	if (!pcoEmails.ok) return err(pcoEmails.error);
-
-	// * Normalize into People object w/ id, name, email and last updated
-	const pcoHydratedContacts = hydratePeopleWithEmails(
-		pcoPeople.value,
-		pcoEmails.value,
-	);
-
+export const syncContacts = async (sourceContacts: SourceContact[]) => {
 	// * Fetch resend contact list
 	//  TODO: Add config for segment specific sync - Should this come from the triggering function or from user settings?
 
@@ -32,13 +16,13 @@ export const syncContacts = async () => {
 	);
 
 	// * Filter out contacts already listed in Resend
-	const contactsToSync = pcoHydratedContacts.filter(
+	const contactsToSync = sourceContacts.filter(
 		(contact) => !resendLookup.has(contact.email),
 	);
 
 	// # TESTING
 	console.log(
-		pcoHydratedContacts.filter((contact) => resendLookup.has(contact.email)),
+		sourceContacts.filter((contact) => resendLookup.has(contact.email)),
 	);
 
 	// TODO: Create new contact in resend
