@@ -14,6 +14,7 @@ export default defineConfig({
           segmentName: "Astro Resend Test",
           segmentIdentifier: "test",
           segmentId: "720e6fd0-85d1-4745-af43-e6c7e2851b4d",
+
           topics: [
             {
               topicName: "Test Topic",
@@ -28,6 +29,7 @@ export default defineConfig({
             name: "RESEND TEST",
             email: "hello@updates.sojourners.church",
           },
+          planningCenterSync: true,
         },
       ],
     }),

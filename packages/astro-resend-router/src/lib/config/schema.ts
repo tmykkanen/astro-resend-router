@@ -48,6 +48,11 @@ export const UserConfigSchema = z.object({
 				 */
 				allowPublicJoin: z.boolean().default(false),
 				/**
+				 * Enables one-way sync from Planning Center Online to Resend Segment before sending a broadcast.
+				 * @default false
+				 */
+				planningCenterSync: z.boolean().default(false),
+				/**
 				 * Optional custom HTML footer to replace the default footer appended to every broadcast email.
 				 * This should be a fully-formed HTML string.
 				 *
