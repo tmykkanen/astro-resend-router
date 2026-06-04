@@ -46,6 +46,14 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 								context: "server",
 								access: "secret",
 							}),
+							PCO_CLIENT_ID: envField.string({
+								context: "server",
+								access: "secret",
+							}),
+							PCO_SECRET: envField.string({
+								context: "server",
+								access: "secret",
+							}),
 						},
 					},
 					vite: {
@@ -59,6 +67,11 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 				injectRoute({
 					pattern: "/api/astro-resend-router",
 					entrypoint: "astro-resend-router/api/astro-resend-router.ts",
+					prerender: false,
+				});
+				injectRoute({
+					pattern: "/api/contacts-sync",
+					entrypoint: "astro-resend-router/api/contacts-sync.ts",
 					prerender: false,
 				});
 			},

@@ -48,6 +48,12 @@
 		}
 	},
 	"files": {
-		"includes": ["**", "!**/dist", "!**/.astro", "!playground"]
+		"includes": [
+			"**",
+			"!**/dist",
+			"!**/.astro",
+			"!playground",
+			"!**/*.openapi.types.d.ts"
+		]
 	}
 }

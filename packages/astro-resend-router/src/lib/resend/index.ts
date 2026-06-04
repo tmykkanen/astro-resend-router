@@ -1,5 +1,5 @@
 export { handleBroadcast } from "./broadcast.ts";
-export { fetchResendContact } from "./contacts.ts";
+export { fetchResendContact, fetchResendContactsList } from "./contacts.ts";
 export { handleJoin } from "./join.ts";
 export type {
 	AllowedAction,
