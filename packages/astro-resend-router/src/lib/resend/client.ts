@@ -9,7 +9,8 @@
 
 import { RESEND_API_KEY } from "astro:env/server";
 import { Resend } from "resend";
-import { throwError } from "./utils/astro-http-utils.ts";
+
+import { throwError } from "#/lib/api/index.ts";
 
 // Validate that the API key is configured
 if (!RESEND_API_KEY) {

@@ -1,67 +1,69 @@
-import { RESEND_WEBHOOK_SECRET } from "astro:env/server";
 import type { APIRoute } from "astro";
-import { handleExecution } from "../lib/execute/execute.ts";
-import { parseContext } from "../lib/parse.ts";
-import {
-	endpointStatus,
-	markRequestReceived,
-	serverStatus,
-	webhookStatus,
-} from "../lib/utils/api-status.ts";
+
+import type { APIStatusCache } from "#/lib/api/index.ts";
 import {
 	errorResponse,
+	reportHealth,
 	successResponse,
-} from "../lib/utils/astro-http-utils.ts";
-import { validateTargets } from "../lib/validate.ts";
-import { verifyWebhook } from "../lib/verify.ts";
+	updateAPIStatus,
+} from "#/lib/api/index.ts";
+import {
+	parseContext,
+	routeAction,
+	validateTargets,
+} from "#/lib/mail/index.ts";
+import { verifyResendWebhook } from "#/lib/resend/index.ts";
 
-export const GET: APIRoute = async () => {
-	return new Response(
-		JSON.stringify({
-			message: "Astro Resend Router Status",
-			webhook: {
-				configured: Boolean(RESEND_WEBHOOK_SECRET),
-				lastEvent: webhookStatus.lastEvent,
-				lastStatus: endpointStatus.ok
-					? "success"
-					: endpointStatus.lastRequestAt
-						? "error"
-						: "unknown",
-			},
-			endpoint: {
-				route: "/api/astro-resend-router",
-				startedAt: serverStatus.startedAt,
-				uptimeMs: Date.now() - serverStatus.startedAtMs,
-				lastRequestAt: endpointStatus.lastRequestAt,
-				lastResponseAt: endpointStatus.lastResponseAt,
-				lastResponse: endpointStatus.lastResponse,
-			},
-		}),
-		{ status: 200 },
-	);
+// CACHE API STATUS IN MEMORY
+const API_STATUS_CACHE: APIStatusCache = {
+	ok: false,
+	lastStatusUpdate: {
+		timestamp: Date.now(),
+		code: null,
+		statusCode: null,
+	},
+};
+
+export const GET: APIRoute = async ({ url }) => {
+	return reportHealth(API_STATUS_CACHE, url.pathname);
 };
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
-		// 0. Status update
-		markRequestReceived();
-
 		// 1. Verify webhook
-		const verified = await verifyWebhook(request);
-		if (!verified.ok) return errorResponse(verified.error);
+		const verified = await verifyResendWebhook(request);
+
+		if (!verified.ok) {
+			const { error } = verified;
+			updateAPIStatus(API_STATUS_CACHE, error);
+			return errorResponse(error);
+		}
 
 		// 2. Parse recipient for routing
 		const parsed = parseContext(verified.value);
-		if (!parsed.ok) return errorResponse(parsed.error);
+		if (!parsed.ok) {
+			const { error } = parsed;
+			updateAPIStatus(API_STATUS_CACHE, error);
+			return errorResponse(error);
+		}
 
 		// 3. Validate segment / topic against user config and Resend data
 		const validated = await validateTargets(parsed.value);
-		if (!validated.ok) return errorResponse(validated.error);
+		if (!validated.ok) {
+			const { error } = validated;
+			updateAPIStatus(API_STATUS_CACHE, error);
+			return errorResponse(error);
+		}
 
 		// 4. Handle Execution
-		const executed = await handleExecution(parsed.value, validated.value);
-		if (!executed.ok) return errorResponse(executed.error);
+		const executed = await routeAction(parsed.value, validated.value);
+		if (!executed.ok) {
+			const { error } = executed;
+			updateAPIStatus(API_STATUS_CACHE, error);
+			return errorResponse(error);
+		}
 
+		updateAPIStatus(API_STATUS_CACHE, executed.value);
 		return successResponse(executed.value);
 	} catch (err) {
 		return errorResponse({

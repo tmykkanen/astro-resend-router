@@ -1,9 +1,11 @@
 import type { AstroIntegration } from "astro";
 import { envField } from "astro/config";
-import { UserConfigSchema } from "./lib/contracts/config.schemas.ts";
-import type { UserConfig } from "./lib/contracts/config.types.ts";
-import { info, throwError } from "./lib/utils/astro-http-utils.ts";
-import { createVM } from "./lib/utils/create-virtual-module.ts";
+
+import { info, throwError } from "#/lib/api/index.ts";
+
+import { createVM } from "./lib/config/create-virtual-module.ts";
+import { UserConfigSchema } from "./lib/config/schema.ts";
+import type { UserConfig } from "./lib/config/types.ts";
 
 export function integration(userConfig: UserConfig): AstroIntegration {
 	if (userConfig === undefined) {
