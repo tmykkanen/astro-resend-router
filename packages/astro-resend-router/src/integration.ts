@@ -3,6 +3,7 @@ import { envField } from "astro/config";
 
 import { info, throwError } from "#/lib/api/index.ts";
 
+import pkg from "../package.json";
 import { createVM } from "./lib/config/create-virtual-module.ts";
 import { UserConfigSchema } from "./lib/config/schema.ts";
 import type { UserConfig } from "./lib/config/types.ts";
@@ -48,6 +49,10 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 						},
 					},
 					vite: {
+						define: {
+							__VERSION__: JSON.stringify(pkg.version),
+						},
+
 						plugins: [createVM("virtual:astro-resend-router/config", config)],
 					},
 				});
