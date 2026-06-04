@@ -1,6 +1,5 @@
 import type { EmailReceivedEvent } from "resend";
 
-import type { PermissionsErrorCode } from "#/lib/mail/index.ts";
 import type { Status } from "#/lib/shared/types.ts";
 
 // ACTIONS
@@ -28,10 +27,7 @@ export type JoinError = Status<JoinErrorCode>;
 export type JoinSuccess = Status<"join_success">;
 
 // BROADCAST
-export type BroadcastErrorCode =
-	| "fetch_email_error"
-	| "create_broadcast_error"
-	| PermissionsErrorCode;
+export type BroadcastErrorCode = "fetch_email_error" | "create_broadcast_error";
 export type BroadcastError = Status<BroadcastErrorCode>;
 export type BroadcastSuccess = Status<"broadcast_success">;
 

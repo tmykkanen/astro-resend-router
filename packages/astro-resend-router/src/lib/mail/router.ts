@@ -8,6 +8,7 @@ import type {
 	RouterSuccess,
 	ValidationSuccess,
 } from "./mail.types.ts";
+import { verifyPermissions } from "./permissions.ts";
 
 export const routeAction = async (
 	ctx: ParseSuccess,
@@ -21,13 +22,17 @@ export const routeAction = async (
 	}
 
 	if (targets.action === "broadcast") {
+		// * Verify broadcast permissions
+		const permissions = await verifyPermissions(targets, ctx.sender);
+		if (!permissions.ok) return err(permissions.error);
+
 		const res = await handleBroadcast(targets, ctx);
 		if (!res.ok) return err(res.error);
 		return ok(res.value);
 	}
 
 	return err({
-		code: "no_action",
+		code: "missing_action",
 		message: "Missing or invalid action",
 		statusCode: 400,
 	});

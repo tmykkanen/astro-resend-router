@@ -1,5 +1,4 @@
 import { err, ok } from "#/lib/api/index.ts";
-import { verifyPermissions } from "#/lib/mail/index.ts";
 import type { ParseSuccess, ValidationSuccess } from "#/lib/mail/mail.types.ts";
 import type { Result } from "#/lib/shared/types.ts";
 
@@ -12,10 +11,6 @@ export const handleBroadcast = async (
 	validTargets: ValidationSuccess,
 	ctx: ParseSuccess,
 ): Promise<Result<BroadcastSuccess, BroadcastError>> => {
-	const permissions = await verifyPermissions(validTargets, ctx.sender);
-
-	if (!permissions.ok) return err(permissions.error);
-
 	// Get incoming email's content
 	const { data: email, error: emailError } = await resend.emails.receiving.get(
 		ctx.emailId,
