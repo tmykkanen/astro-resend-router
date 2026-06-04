@@ -56,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
 		}
 
 		// 4. Handle Execution
-		const executed = await routeAction(parsed.value, validated.value);
+		const executed = await routeAction(validated.value);
 		if (!executed.ok) {
 			const { error } = executed;
 			updateAPIStatus(API_STATUS_CACHE, error);

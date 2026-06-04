@@ -51,7 +51,13 @@ export const validateTargets = async (
 			statusCode: 400,
 		});
 
-	if (!localTopic) return ok({ action: ctx.action, segment: localSegment });
+	if (!localTopic)
+		return ok({
+			action: ctx.action,
+			segment: localSegment,
+			requestFrom: ctx.requestFrom,
+			emailId: ctx.emailId,
+		});
 
 	// Verify remote topic id matches resendId
 	const { data: remoteTopic, error: remoteTopicError } =
@@ -64,5 +70,11 @@ export const validateTargets = async (
 			statusCode: 500,
 		});
 
-	return ok({ action: ctx.action, segment: localSegment, topic: localTopic });
+	return ok({
+		action: ctx.action,
+		segment: localSegment,
+		topic: localTopic,
+		requestFrom: ctx.requestFrom,
+		emailId: ctx.emailId,
+	});
 };

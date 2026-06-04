@@ -9,18 +9,18 @@ import type {
 import type { Status } from "#/lib/shared/types.ts";
 
 // PARSE
-export type ParseErrorCode = "missing_recipient" | "missing_segment";
+type ParseErrorCode = "missing_recipient" | "missing_segment";
 export type ParseError = Status<ParseErrorCode>;
 export type ParseSuccess = {
 	action: AllowedAction;
-	sender: string;
+	requestFrom: string;
 	emailId: string;
 	segmentIdentifier: string;
 	topicIdentifier?: string;
 };
 
 // VALIDATE-TARGETS
-export type ValidationErrorCode =
+type ValidationErrorCode =
 	| "segment_local_error"
 	| "segment_remote_error"
 	| "topic_local_error"
@@ -28,21 +28,25 @@ export type ValidationErrorCode =
 export type ValidationError = Status<ValidationErrorCode>;
 export type ValidationSuccess = {
 	action: AllowedAction;
+	requestFrom: string;
+	emailId: string;
 	segment: LocalSegment;
 	topic?: LocalTopic;
 };
 
 // PERMISSIONS
-export type PermissionsErrorCode =
+type PermissionsErrorCode =
 	| "fetch_remote_contacts_error"
 	| "unauthorized_sender";
 export type PermissionsError = Status<PermissionsErrorCode>;
 
 // ROUTER
-export type RouterErrorCode =
+type RouterErrorCode =
 	| JoinErrorCode
 	| BroadcastErrorCode
 	| PermissionsErrorCode
+	| "get_people_with_emails_error"
+	| "sync_contacts_error"
 	| "missing_action";
 
 export type RouterError = Status<RouterErrorCode>;

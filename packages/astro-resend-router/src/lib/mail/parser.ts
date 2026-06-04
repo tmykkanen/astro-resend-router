@@ -1,16 +1,17 @@
+import type { EmailReceivedEvent } from "resend";
+
 import { err, ok, warn } from "#/lib/api/index.ts";
 import { isAllowedAction } from "#/lib/resend/index.ts";
-import type { VerifySuccess } from "#/lib/resend/resend.types.ts";
 import type { Result } from "#/lib/shared/types.ts";
 
 import type { ParseError, ParseSuccess } from "./mail.types.ts";
 
 export const parseContext = (
-	verifiedPayload: VerifySuccess,
+	verifiedPayload: EmailReceivedEvent,
 ): Result<ParseSuccess, ParseError> => {
 	// Validate recipient presence
 	const recipients = verifiedPayload.data.to;
-	const sender = verifiedPayload.data.from.trim().toLowerCase();
+	const requestFrom = verifiedPayload.data.from.trim().toLowerCase();
 	const emailId = verifiedPayload.data.email_id;
 
 	const recipient = recipients[0];
@@ -57,7 +58,7 @@ export const parseContext = (
 		return p1
 			? ok({
 					action: p0,
-					sender,
+					requestFrom,
 					emailId,
 					segmentIdentifier: p1,
 					...(p2 && { topicIdentifier: p2 }),
@@ -72,7 +73,7 @@ export const parseContext = (
 	// * Broadcast is the 'default' action
 	return ok({
 		action: "broadcast",
-		sender,
+		requestFrom,
 		emailId,
 		segmentIdentifier: p0,
 		...(p1 && { topicIdentifier: p1 }),

@@ -1,3 +1,5 @@
+import type { ValidationSuccess } from "#/lib/mail/index.ts";
+
 type OkResult<Success> = Success extends void
 	? { ok: true }
 	: { ok: true; value: Success };
@@ -16,3 +18,5 @@ export type Status<C extends string> = {
 
 export type UnknownErrorCode = "unknown_error";
 export type UnknownError = Status<UnknownErrorCode>;
+
+export type ValidatedContext = ValidationSuccess;

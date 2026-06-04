@@ -1,18 +1,16 @@
 import { err } from "#/lib/api/index.ts";
 import { fetchResendContact } from "#/lib/resend/index.ts";
-import type { Result } from "#/lib/shared/types.ts";
+import type { Result, ValidatedContext } from "#/lib/shared/types.ts";
 
-import type { PermissionsError, ValidationSuccess } from "./mail.types.ts";
+import type { PermissionsError } from "./mail.types.ts";
 
 export const verifyPermissions = async (
-	validTargets: ValidationSuccess,
-	requestFrom: string,
+	ctx: ValidatedContext,
 ): Promise<Result<void, PermissionsError>> => {
-	const email = requestFrom.toLowerCase();
+	const email = ctx.requestFrom.toLowerCase();
 
 	// Check for authorizedSenders configured in astro.config.mjs
-	if (validTargets.segment.authorizedSenders?.includes(email))
-		return { ok: true };
+	if (ctx.segment.authorizedSenders?.includes(email)) return { ok: true };
 
 	// Check for authorized_sender === 'true' in contact properties on Resend
 	const contact = await fetchResendContact(email);
@@ -24,7 +22,7 @@ export const verifyPermissions = async (
 
 	return err({
 		code: "unauthorized_sender",
-		message: `Unauthorized sender: ${requestFrom}`,
+		message: `Unauthorized sender: ${ctx.requestFrom}`,
 		statusCode: 200,
 	});
 };

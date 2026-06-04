@@ -7,7 +7,6 @@ export type {
 	BroadcastSuccess,
 	JoinErrorCode,
 	JoinSuccess,
-	VerifyErrorCode,
 	VerifySuccess,
 } from "./resend.types.ts";
 export { isAllowedAction } from "./resend.types.ts";

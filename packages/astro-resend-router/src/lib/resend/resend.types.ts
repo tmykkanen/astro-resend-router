@@ -13,7 +13,7 @@ export const isAllowedAction = (value: string): value is AllowedAction => {
 };
 
 // VERIFY WEBHOOK
-export type VerifyErrorCode =
+type VerifyErrorCode =
 	| "missing_svix_headers"
 	| "missing_webhook_secret"
 	| "unhandled_webhook_event_type"
