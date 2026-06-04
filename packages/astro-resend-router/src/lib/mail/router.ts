@@ -20,8 +20,15 @@ export const routeAction = async (
 		return ok(res.value);
 	}
 
-	const res = await handleBroadcast(targets, ctx);
-	if (!res.ok) return err(res.error);
+	if (targets.action === "broadcast") {
+		const res = await handleBroadcast(targets, ctx);
+		if (!res.ok) return err(res.error);
+		return ok(res.value);
+	}
 
-	return ok(res.value);
+	return err({
+		code: "no_action",
+		message: "Missing or invalid action",
+		statusCode: 400,
+	});
 };

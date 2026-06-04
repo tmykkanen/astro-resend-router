@@ -39,6 +39,6 @@ export type PermissionsErrorCode =
 export type PermissionsError = Status<PermissionsErrorCode>;
 
 // ROUTER
-export type RouterErrorCode = JoinErrorCode | BroadcastErrorCode;
+export type RouterErrorCode = JoinErrorCode | BroadcastErrorCode | "no_action";
 export type RouterError = Status<RouterErrorCode>;
 export type RouterSuccess = BroadcastSuccess | JoinSuccess;

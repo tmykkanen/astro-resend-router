@@ -69,6 +69,7 @@ export const parseContext = (
 				});
 
 	// True for [segment], [segment, topic]
+	// * Broadcast is the 'default' action
 	return ok({
 		action: "broadcast",
 		sender,
