@@ -36,6 +36,11 @@ export const syncContacts = async () => {
 		(contact) => !resendLookup.has(contact.email),
 	);
 
+	// # TESTING
+	console.log(
+		pcoHydratedContacts.filter((contact) => resendLookup.has(contact.email)),
+	);
+
 	// TODO: Create new contact in resend
 
 	// # TEMP OK Return
