@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import { err, ok } from "#/lib/api/index.ts";
 import type { Result } from "#/lib/shared/types.ts";
 
-import { authHeaders } from "./auth.ts";
+import { useAuth } from "./auth.ts";
 import { pco } from "./client.ts";
 import { FetchPeopleResponseSchema } from "./pco.schemas.ts";
 import type { FetchPeopleError, PersonResult } from "./pco.types.ts";
@@ -21,7 +21,7 @@ export const fetchPeople = async (
 			params: {
 				query: { per_page: perPage, offset: offset },
 			},
-			headers: authHeaders,
+			headers: useAuth(),
 		});
 
 		if (error)

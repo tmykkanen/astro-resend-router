@@ -1,6 +1,5 @@
 import type { AstroIntegration } from "astro";
 import { envField } from "astro/config";
-import { loadEnv } from "vite";
 
 import { info, throwError } from "#/lib/api/index.ts";
 
@@ -8,11 +7,6 @@ import pkg from "../package.json";
 import type { UserConfig } from "./lib/config/config.schemas.ts";
 import { UserConfigSchema } from "./lib/config/config.schemas.ts";
 import { createVM } from "./lib/config/create-virtual-module.ts";
-
-const env = loadEnv("", process.cwd(), ""); // '' prefix = load everything
-
-const PCO_CLIENT_ID_CONFIGURED = Boolean(env.PCO_CLIENT_ID);
-const PCO_SECRET_CONFIGURED = Boolean(env.PCO_SECRET);
 
 export function integration(userConfig: UserConfig): AstroIntegration {
 	if (userConfig === undefined) {
@@ -84,24 +78,6 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 				});
 			},
 			"astro:config:done": () => {
-				for (const segment of config.segments) {
-					if (segment.planningCenterSync) {
-						if (!PCO_CLIENT_ID_CONFIGURED || !PCO_SECRET_CONFIGURED) {
-							throwError(
-								"planningCenterSync Error",
-								`planningCenterSync is enabled, but .env is missing:
-                ${
-									PCO_CLIENT_ID_CONFIGURED
-										? "PCO_SECRET"
-										: PCO_SECRET_CONFIGURED
-											? "PCO_CLIENT_ID"
-											: "PCO_CLIENT_ID and PCO_SECRET"
-								}`,
-							);
-						}
-					}
-				}
-
 				info(
 					"API endpoint successfully injected. Access at /api/astro-resend-router",
 				);
