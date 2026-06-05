@@ -33,11 +33,10 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 	// 	sourceContacts.value.filter((contact) => !resendLookup.has(contact[0])),
 	// );
 
-	// TODO: Create new contact in resend
 	for (const contact of contactsToSync) {
 		const { email, firstName, lastName, source } = contact[1];
 
-		createResendContact({
+		const res = await createResendContact({
 			email,
 			firstName: firstName ?? "",
 			lastName: lastName ?? "",
@@ -45,7 +44,7 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 			segment: { id: ctx.segment.segmentId },
 		});
 
-		console.log(`Created contact for: ${contact[1].email}`);
+		if (!res.ok) return err(res.error);
 	}
 
 	// # TEMP OK Return

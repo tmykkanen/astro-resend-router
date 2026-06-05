@@ -7,6 +7,7 @@ import pkg from "../package.json";
 import type { UserConfig } from "./lib/config/config.schemas.ts";
 import { UserConfigSchema } from "./lib/config/config.schemas.ts";
 import { createVM } from "./lib/config/create-virtual-module.ts";
+import { syncResendProperties } from "./lib/resend/properties.ts";
 
 export function integration(userConfig: UserConfig): AstroIntegration {
 	if (userConfig === undefined) {
@@ -78,7 +79,21 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 					prerender: false,
 				});
 			},
-			"astro:config:done": () => {
+			"astro:config:done": async () => {
+				// Set up Resend properties
+				const { loadEnv } = await import("vite");
+
+				const env = loadEnv(
+					process.env.NODE_ENV ?? "development",
+					process.cwd(),
+					"", // prefix — '' loads ALL vars, 'PUBLIC_' loads only public ones
+				);
+
+				const apiKey = env.RESEND_API_KEY;
+				if (!apiKey) throw new Error("Missing RESEND_API_KEY");
+
+				await syncResendProperties(apiKey);
+
 				info(
 					"API endpoint successfully injected. Access at /api/astro-resend-router",
 				);

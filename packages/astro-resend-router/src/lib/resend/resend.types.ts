@@ -22,7 +22,7 @@ export type VerifyError = Status<VerifyErrorCode>;
 export type VerifySuccess = EmailReceivedEvent;
 
 // JOIN
-export type JoinErrorCode = "create_contact_error" | "send_confirmation_error";
+export type JoinErrorCode = CreateContactErrorCode | "send_confirmation_error";
 export type JoinError = Status<JoinErrorCode>;
 export type JoinSuccess = Status<"join_success">;
 
@@ -34,5 +34,7 @@ export type BroadcastSuccess = Status<"broadcast_success">;
 // CONTACTS
 export type FetchContactsErrorCode = "fetch_remote_contacts_error";
 export type FetchContactsError = Status<FetchContactsErrorCode>;
-export type CreateContactErrorCode = "create_contact_error";
+export type CreateContactErrorCode =
+	| "create_contact_error"
+	| "create_property_error";
 export type CreateContactError = Status<CreateContactErrorCode>;
