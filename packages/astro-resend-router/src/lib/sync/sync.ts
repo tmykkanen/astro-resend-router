@@ -10,7 +10,9 @@ import { getContactsFromProviders } from "./get-contacts-from-providers.ts";
 // TODO: Explictly type return
 export const syncContacts = async (ctx: ValidatedContext) => {
 	// * Get source contacts from providers
-	const sourceContacts = await getContactsFromProviders();
+	const sourceContacts = await getContactsFromProviders(
+		ctx.segment.syncContactsProviders,
+	);
 	if (!sourceContacts.ok) return err(sourceContacts.error);
 
 	// * Fetch resend contact list

@@ -22,7 +22,7 @@ export const routeAction = async (
 		if (!permissions.ok) return err(permissions.error);
 
 		// * Conditionally sync contacts
-		if (ctx.segment.syncContacts) {
+		if (ctx.segment.syncContactsProviders.length > 0) {
 			const sync = await syncContacts(ctx);
 			// TODO: Return errors from within syncContacts?
 			if (!sync.ok)

@@ -29,7 +29,7 @@ export default defineConfig({
             name: "RESEND TEST",
             email: "hello@updates.sojourners.church",
           },
-          syncContacts: true,
+          syncContactsProviders: ["pco"],
         },
       ],
     }),

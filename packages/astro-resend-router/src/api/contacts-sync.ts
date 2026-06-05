@@ -20,7 +20,7 @@ export const GET: APIRoute = async () => {
 			},
 			authorizedSenders: ["auth@example.com"],
 			allowPublicJoin: true,
-			syncContacts: true,
+			syncContactsProviders: ["mock"],
 			topics: [],
 			customEmailFooter: "",
 		},

@@ -3,7 +3,7 @@ import type { ContactsProvider } from "#/lib/sync/index.ts";
 
 import { getPeopleWithEmails } from "./get-people-with-emails.ts";
 
-export const mockProvider: ContactsProvider = {
+export const mockProvider = {
 	name: "mock",
 	getContacts: async () => {
 		const res = await getPeopleWithEmails();
@@ -18,4 +18,4 @@ export const mockProvider: ContactsProvider = {
 
 		return ok(res.value);
 	},
-};
+} as const satisfies ContactsProvider;
