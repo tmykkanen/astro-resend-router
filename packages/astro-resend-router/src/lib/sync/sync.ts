@@ -1,17 +1,18 @@
 import { err, ok } from "#/lib/api/index.ts";
 import { fetchResendContactsList } from "#/lib/resend/index.ts";
+import type { ValidatedContext } from "#/lib/shared/types.ts";
 
 import { getContactsFromProviders } from "./get-contacts-from-providers.ts";
 
 // TODO: Explictly type return
-export const syncContacts = async () => {
+export const syncContacts = async (ctx: ValidatedContext) => {
 	// * Get source contacts from providers
 	const sourceContacts = await getContactsFromProviders();
 	if (!sourceContacts.ok) return err(sourceContacts.error);
 
 	// * Fetch resend contact list
 	//  TODO: Add config for segment specific sync - Should this come from the triggering function or from user settings?
-	const resendContacts = await fetchResendContactsList();
+	const resendContacts = await fetchResendContactsList(ctx.segment.segmentId);
 	if (!resendContacts.ok) return err(resendContacts.error);
 
 	// * Normalize resend contacts into lookup table w/ emails

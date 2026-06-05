@@ -27,10 +27,10 @@ export const fetchResendContact = async (
 	return ok(data);
 };
 
-export const fetchResendContactsList = async (): Promise<
-	Result<ListContactsResponseSuccess, FetchContactsError>
-> => {
-	const { data, error } = await resend.contacts.list();
+export const fetchResendContactsList = async (
+	segmentId: string,
+): Promise<Result<ListContactsResponseSuccess, FetchContactsError>> => {
+	const { data, error } = await resend.contacts.list({ segmentId });
 
 	if (error || !data)
 		return err({

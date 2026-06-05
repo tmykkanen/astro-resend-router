@@ -23,7 +23,7 @@ export const routeAction = async (
 
 		// * Conditionally sync contacts
 		if (ctx.segment.syncContacts) {
-			const sync = await syncContacts();
+			const sync = await syncContacts(ctx);
 			// TODO: Return errors from within syncContacts?
 			if (!sync.ok)
 				return err({
