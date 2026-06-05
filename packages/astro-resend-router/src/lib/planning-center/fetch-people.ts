@@ -5,8 +5,8 @@ import type { Result } from "#/lib/shared/types.ts";
 
 import { authHeaders } from "./auth.ts";
 import { pco } from "./client.ts";
+import { FetchPeopleResponseSchema } from "./pco.schemas.ts";
 import type { FetchPeopleError, PersonResult } from "./pco.types.ts";
-import { FetchPeopleResponseSchema } from "./schemas.ts";
 
 export const fetchPeople = async (
 	perPage = 100,

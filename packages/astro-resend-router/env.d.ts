@@ -8,7 +8,7 @@ declare module "astro:env/server" {
 }
 
 declare module "virtual:astro-resend-router/config" {
-	const config: import("./src/lib/config/types.ts").UserConfig;
+	const config: import("./src/lib/config/config.types.ts").UserConfig;
 	export default config;
 }
 

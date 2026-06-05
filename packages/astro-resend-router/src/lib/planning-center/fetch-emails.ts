@@ -5,8 +5,8 @@ import type { Result } from "#/lib/shared/types.ts";
 
 import { authHeaders } from "./auth.ts";
 import { pco } from "./client.ts";
+import { FetchEmailsResponseSchema } from "./pco.schemas.ts";
 import type { EmailResult, FetchEmailsError } from "./pco.types.ts";
-import { FetchEmailsResponseSchema } from "./schemas.ts";
 
 export const fetchEmails = async (
 	perPage = 100,

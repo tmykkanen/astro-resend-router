@@ -1,4 +1,4 @@
-import type { LocalSegment, LocalTopic } from "#/lib/config/types.ts";
+import type { LocalSegment, LocalTopic } from "#/lib/config/config.types.ts";
 import type {
 	AllowedAction,
 	BroadcastErrorCode,

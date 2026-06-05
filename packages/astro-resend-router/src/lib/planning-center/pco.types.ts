@@ -1,7 +1,7 @@
 import type { z } from "astro/zod";
 
 import type { Status } from "../shared/types.ts";
-import type { EmailSchema, PersonSchema } from "./schemas.ts";
+import type { EmailSchema, PersonSchema } from "./pco.schemas.ts";
 
 export type EmailResult = z.infer<typeof EmailSchema>;
 export type PersonResult = z.infer<typeof PersonSchema>;
