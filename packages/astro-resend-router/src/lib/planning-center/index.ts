@@ -1,1 +1,1 @@
-export { getPeopleWithEmails } from "./get-people-with-emails.ts";
+export { pcoProvider } from "./provider.ts";

@@ -1,12 +1,16 @@
 import { err, ok } from "#/lib/api/index.ts";
 import { fetchResendContactsList } from "#/lib/resend/index.ts";
 
-import type { SourceContact } from "./sync.types.ts";
+import { getContactsFromProviders } from "./get-contacts-from-providers.ts";
 
-export const syncContacts = async (sourceContacts: SourceContact[]) => {
+// TODO: Explictly type return
+export const syncContacts = async () => {
+	// * Get source contacts from providers
+	const sourceContacts = await getContactsFromProviders();
+	if (!sourceContacts.ok) return err(sourceContacts.error);
+
 	// * Fetch resend contact list
 	//  TODO: Add config for segment specific sync - Should this come from the triggering function or from user settings?
-
 	const resendContacts = await fetchResendContactsList();
 	if (!resendContacts.ok) return err(resendContacts.error);
 
@@ -16,13 +20,13 @@ export const syncContacts = async (sourceContacts: SourceContact[]) => {
 	);
 
 	// * Filter out contacts already listed in Resend
-	const contactsToSync = sourceContacts.filter(
-		(contact) => !resendLookup.has(contact.email),
+	const contactsToSync = sourceContacts.value.filter(
+		(contact) => !resendLookup.has(contact[0]),
 	);
 
 	// # TESTING
 	console.log(
-		sourceContacts.filter((contact) => resendLookup.has(contact.email)),
+		sourceContacts.value.filter((contact) => !resendLookup.has(contact[0])),
 	);
 
 	// TODO: Create new contact in resend

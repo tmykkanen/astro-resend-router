@@ -46,6 +46,7 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 								context: "server",
 								access: "secret",
 							}),
+							// * Add .env variables for sync providers here
 							PCO_CLIENT_ID: envField.string({
 								context: "server",
 								access: "secret",

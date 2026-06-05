@@ -1,5 +1,4 @@
 import { err, ok } from "#/lib/api/index.ts";
-import { getPeopleWithEmails } from "#/lib/planning-center/index.ts";
 import { handleBroadcast, handleJoin } from "#/lib/resend/index.ts";
 import type { Result, ValidatedContext } from "#/lib/shared/types.ts";
 import { syncContacts } from "#/lib/sync/index.ts";
@@ -23,16 +22,9 @@ export const routeAction = async (
 		if (!permissions.ok) return err(permissions.error);
 
 		// * Conditionally sync contacts
-		if (ctx.segment.planningCenterSync) {
-			const peopleWithEmails = await getPeopleWithEmails();
-			if (!peopleWithEmails.ok)
-				return err({
-					code: "get_people_with_emails_error",
-					message: `getPeoplewWithEmails returned error: ${peopleWithEmails.error.code}`,
-					statusCode: peopleWithEmails.error.statusCode,
-				});
-
-			const sync = await syncContacts(peopleWithEmails.value);
+		if (ctx.segment.syncContacts) {
+			const sync = await syncContacts();
+			// TODO: Return errors from within syncContacts?
 			if (!sync.ok)
 				return err({
 					code: "sync_contacts_error",

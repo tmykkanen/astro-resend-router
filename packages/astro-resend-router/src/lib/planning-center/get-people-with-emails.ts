@@ -1,8 +1,14 @@
-import { err, ok } from "../api/index.ts";
+import { err, ok } from "#/lib/api/index.ts";
+import type { Result } from "#/lib/shared/types.ts";
+import type { SourceContact } from "#/lib/sync/index.ts";
+
 import { fetchEmails } from "./fetch-emails.ts";
 import { fetchPeople } from "./fetch-people.ts";
+import type { GetPeopleWithEmailsError } from "./pco.types.ts";
 
-export const getPeopleWithEmails = async () => {
+export const getPeopleWithEmails = async (): Promise<
+	Result<SourceContact[], GetPeopleWithEmailsError>
+> => {
 	// * Fetch People from PCO
 	const people = await fetchPeople();
 	if (!people.ok) return err(people.error);
