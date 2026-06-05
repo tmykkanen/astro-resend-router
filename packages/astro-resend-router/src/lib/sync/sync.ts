@@ -1,5 +1,8 @@
 import { err, ok } from "#/lib/api/index.ts";
-import { fetchResendContactsList } from "#/lib/resend/index.ts";
+import {
+	createResendContact,
+	fetchResendContactsList,
+} from "#/lib/resend/index.ts";
 import type { ValidatedContext } from "#/lib/shared/types.ts";
 
 import { getContactsFromProviders } from "./get-contacts-from-providers.ts";
@@ -26,11 +29,24 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 	);
 
 	// # TESTING
-	console.log(
-		sourceContacts.value.filter((contact) => !resendLookup.has(contact[0])),
-	);
+	// console.log(
+	// 	sourceContacts.value.filter((contact) => !resendLookup.has(contact[0])),
+	// );
 
 	// TODO: Create new contact in resend
+	for (const contact of contactsToSync) {
+		const { email, firstName, lastName, source } = contact[1];
+
+		createResendContact({
+			email,
+			firstName: firstName ?? "",
+			lastName: lastName ?? "",
+			source,
+			segment: { id: ctx.segment.segmentId },
+		});
+
+		console.log(`Created contact for: ${contact[1].email}`);
+	}
 
 	// # TEMP OK Return
 	return ok(contactsToSync);

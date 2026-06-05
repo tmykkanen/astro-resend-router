@@ -10,11 +10,11 @@ export const handleJoin = async (
 ): Promise<Result<JoinSuccess, JoinError>> => {
 	const { segment, topic } = ctx;
 
-	const createContact = await createResendContact(
-		ctx.requestFrom,
-		[{ id: segment.segmentId }],
-		topic ? [{ id: topic.topicId, subscription: "opt_in" }] : [],
-	);
+	const createContact = await createResendContact({
+		email: ctx.requestFrom,
+		segment: { id: segment.segmentId },
+		...(topic && { topic: { id: topic.topicId, subscription: "opt_in" } }),
+	});
 
 	if (!createContact.ok) return err(createContact.error);
 

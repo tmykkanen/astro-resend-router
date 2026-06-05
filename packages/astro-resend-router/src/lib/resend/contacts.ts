@@ -42,18 +42,36 @@ export const fetchResendContactsList = async (
 	return ok(data);
 };
 
-export const createResendContact = async (
-	email: string,
-	segments: { id: string }[],
-	topics?: {
+type CreateResendContactOptions = {
+	email: string;
+	firstName?: string;
+	lastName?: string;
+	source?: string;
+	segment: {
+		id: string;
+	};
+	topic?: {
 		id: string;
 		subscription: "opt_in" | "opt_out";
-	}[],
+	};
+};
+
+export const createResendContact = async (
+	config: CreateResendContactOptions,
 ): Promise<Result<CreateContactResponseSuccess, CreateContactError>> => {
+	const { email, segment, topic, firstName, lastName, source } = config;
+
 	const { data, error } = await resend.contacts.create({
 		email,
-		segments,
-		topics: topics ?? [],
+		firstName: firstName ?? "",
+		lastName: lastName ?? "",
+		segments: [{ id: segment.id }],
+		properties: source
+			? {
+					source,
+				}
+			: {},
+		topics: topic ? [{ id: topic?.id, subscription: topic?.subscription }] : [],
 	});
 
 	if (error)

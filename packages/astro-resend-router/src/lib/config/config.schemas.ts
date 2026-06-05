@@ -12,6 +12,7 @@ export const LocalTopicSchema = z.object({
 	 * Does not need to match the topic name in Resend.
 	 * @example 'newsletter' // matches pfi.newsletter@domain.com
 	 */
+	// TODO: Rename from identifier to slug for clarity
 	topicIdentifier: z
 		.string()
 		.trim()
