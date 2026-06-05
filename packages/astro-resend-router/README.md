@@ -90,7 +90,7 @@ export default defineConfig({
       segments: [
         {
           segmentName: 'Prairie Forge',
-          segmentIdentifier: 'pfi',
+          segmentSlug: 'pfi',
           segmentId: 'segment_id_from_resend',
 
           sendFromEmail: {
@@ -105,7 +105,7 @@ export default defineConfig({
           topics: [
             {
               topicName: 'Prairie Forge Newsletter',
-              topicIdentifier: 'newsletter',
+              topicSlug: 'newsletter',
               topicId: 'topic_id_from_resend'
             }
           ]
@@ -126,12 +126,12 @@ export default defineConfig({
 segmentName: "Prairie Forge"; // matches pfi@yourdomain.com
 ```
 
-`segmentIdentifier`: Identifier used to match the recipient address.
+`segmentSlug`: Slug used to match the recipient address.
 
 - Does not need to match the segment name in Resend.
 
 ```typescript
-segmentIdentifier: "pfi"; // matches pfi@yourdomain.com
+segmentSlug: "pfi"; // matches pfi@yourdomain.com
 ```
 
 `segmentId`: Resend audience segment ID.
@@ -197,7 +197,7 @@ customEmailFooter: `
 `topics` (optional): Defines topics within a segment.
 
 - `topicName`: Display-friendly name.
-- `topicIdentifier`: Identifier matched after the segment name. Does not need to match the topic name in Resend.
+- `topicSlug`: Slug matched after the segment name. Does not need to match the topic name in Resend.
 - `topicId`: Find it in Resend by navigating to Topics and clicking ... next to the target topic.
 
 ```typescript

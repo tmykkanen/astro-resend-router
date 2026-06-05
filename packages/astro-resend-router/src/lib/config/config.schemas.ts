@@ -12,8 +12,7 @@ export const LocalTopicSchema = z.object({
 	 * Does not need to match the topic name in Resend.
 	 * @example 'newsletter' // matches pfi.newsletter@domain.com
 	 */
-	// TODO: Rename from identifier to slug for clarity
-	topicIdentifier: z
+	topicSlug: z
 		.string()
 		.trim()
 		.transform((s) => s.toLowerCase()),
@@ -36,7 +35,7 @@ export const LocalSegmentSchema = z.object({
 	 * Does not need to match the segment name in Resend.
 	 * @example 'pfi' // matches pfi@domain.com
 	 */
-	segmentIdentifier: z
+	segmentSlug: z
 		.string()
 		.trim()
 		.transform((s) => s.toLowerCase()),
@@ -118,13 +117,13 @@ export const LocalSegmentSchema = z.object({
 		.superRefine((topics, ctx) => {
 			const idents = new Set<string>();
 			for (const topic of topics) {
-				if (idents.has(topic.topicIdentifier)) {
+				if (idents.has(topic.topicSlug)) {
 					ctx.addIssue({
 						code: "custom",
-						message: `Duplicate topic identifier: ${topic.topicIdentifier}`,
+						message: `Duplicate topic slug: ${topic.topicSlug}`,
 					});
 				}
-				idents.add(topic.topicIdentifier);
+				idents.add(topic.topicSlug);
 			}
 		})
 		.default([]),
@@ -141,13 +140,13 @@ export const UserConfigSchema = z.object({
 	segments: z.array(LocalSegmentSchema).superRefine((segments, ctx) => {
 		const idents = new Set<string>();
 		for (const seg of segments) {
-			if (idents.has(seg.segmentIdentifier)) {
+			if (idents.has(seg.segmentSlug)) {
 				ctx.addIssue({
 					code: "custom",
-					message: `Duplicate segment name: ${seg.segmentIdentifier}`,
+					message: `Duplicate segment name: ${seg.segmentSlug}`,
 				});
 			}
-			idents.add(seg.segmentIdentifier);
+			idents.add(seg.segmentSlug);
 		}
 	}),
 });

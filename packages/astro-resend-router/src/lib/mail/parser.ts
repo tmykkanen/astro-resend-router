@@ -60,8 +60,8 @@ export const parseContext = (
 					action: p0,
 					requestFrom,
 					emailId,
-					segmentIdentifier: p1,
-					...(p2 && { topicIdentifier: p2 }),
+					segmentSlug: p1,
+					...(p2 && { topicSlug: p2 }),
 				})
 			: err({
 					code: "missing_segment",
@@ -75,7 +75,7 @@ export const parseContext = (
 		action: "broadcast",
 		requestFrom,
 		emailId,
-		segmentIdentifier: p0,
-		...(p1 && { topicIdentifier: p1 }),
+		segmentSlug: p0,
+		...(p1 && { topicSlug: p1 }),
 	});
 };

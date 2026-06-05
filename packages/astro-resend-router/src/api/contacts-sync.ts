@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
 		emailId: "string",
 		segment: {
 			segmentName: "Astro Resend Test",
-			segmentIdentifier: "test",
+			segmentSlug: "test",
 			segmentId: "720e6fd0-85d1-4745-af43-e6c7e2851b4d",
 			sendFromEmail: {
 				name: "TEST",

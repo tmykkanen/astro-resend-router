@@ -15,8 +15,8 @@ export type ParseSuccess = {
 	action: AllowedAction;
 	requestFrom: string;
 	emailId: string;
-	segmentIdentifier: string;
-	topicIdentifier?: string;
+	segmentSlug: string;
+	topicSlug?: string;
 };
 
 // VALIDATE-TARGETS

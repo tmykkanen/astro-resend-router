@@ -17,13 +17,13 @@ export const validateTargets = async (
 	ctx: ParseSuccess,
 ): Promise<Result<ValidationSuccess, ValidationError>> => {
 	const localSegment = config.segments.find(
-		(segment) => segment.segmentIdentifier === ctx.segmentIdentifier,
+		(segment) => segment.segmentSlug === ctx.segmentSlug,
 	);
 
 	if (!localSegment)
 		return err({
 			code: "segment_local_error",
-			message: `Segment [${ctx.segmentIdentifier}] is not configured. Add to user configuration to proceed.`,
+			message: `Segment [${ctx.segmentSlug}] is not configured. Add to user configuration to proceed.`,
 			statusCode: 400,
 		});
 
@@ -38,16 +38,14 @@ export const validateTargets = async (
 		});
 
 	// Validate topic against local user config
-	const localTopic = ctx.topicIdentifier
-		? localSegment.topics?.find(
-				(topic) => topic.topicIdentifier === ctx.topicIdentifier,
-			)
+	const localTopic = ctx.topicSlug
+		? localSegment.topics?.find((topic) => topic.topicSlug === ctx.topicSlug)
 		: undefined;
 
-	if (ctx.topicIdentifier && !localTopic)
+	if (ctx.topicSlug && !localTopic)
 		return err({
 			code: "topic_local_error",
-			message: `Topic [${ctx.topicIdentifier}] is not configured for segment [${localSegment.segmentName}]`,
+			message: `Topic [${ctx.topicSlug}] is not configured for segment [${localSegment.segmentName}]`,
 			statusCode: 400,
 		});
 
