@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 
-import type { UserConfig } from "./config.types.ts";
+import type { UserConfig } from "./config.schemas.ts";
 
 export function createVM(
 	VIRTUAL_MODULE_ID: string,

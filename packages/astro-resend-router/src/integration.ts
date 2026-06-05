@@ -5,8 +5,8 @@ import { loadEnv } from "vite";
 import { info, throwError } from "#/lib/api/index.ts";
 
 import pkg from "../package.json";
+import type { UserConfig } from "./lib/config/config.schemas.ts";
 import { UserConfigSchema } from "./lib/config/config.schemas.ts";
-import type { UserConfig } from "./lib/config/config.types.ts";
 import { createVM } from "./lib/config/create-virtual-module.ts";
 
 const env = loadEnv("", process.cwd(), ""); // '' prefix = load everything
