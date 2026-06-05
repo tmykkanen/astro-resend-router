@@ -28,11 +28,6 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 		(contact) => !resendLookup.has(contact[0]),
 	);
 
-	// # TESTING
-	// console.log(
-	// 	sourceContacts.value.filter((contact) => !resendLookup.has(contact[0])),
-	// );
-
 	for (const contact of contactsToSync) {
 		const { email, firstName, lastName, source } = contact[1];
 

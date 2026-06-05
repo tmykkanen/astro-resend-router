@@ -1,9 +1,9 @@
 import type { APIRoute } from "astro";
 
 import { errorResponse, successResponse } from "#/lib/api/response.ts";
-import { createResendContact } from "#/lib/resend/index.ts";
+// import { createResendContact } from "#/lib/resend/index.ts";
 import type { ValidatedContext } from "#/lib/shared/types.ts";
-// import { syncContacts } from "#/lib/sync/index.ts";
+import { syncContacts } from "#/lib/sync/index.ts";
 
 export const GET: APIRoute = async () => {
 	const mock_ctx: ValidatedContext = {
@@ -26,28 +26,28 @@ export const GET: APIRoute = async () => {
 		},
 	};
 
-	// const sync = await syncContacts(mock_ctx);
-	// if (!sync.ok) return errorResponse(sync.error);
+	const sync = await syncContacts(mock_ctx);
+	if (!sync.ok) return errorResponse(sync.error);
 
-	// console.log(sync.value);
-	// console.log(sync.value.length);
+	console.log(sync.value);
+	console.log(sync.value.length);
 	//
 	//
 
-	const firstName = "John";
-	const lastName = "Smith";
-	const source = "pco";
+	// const firstName = "John";
+	// const lastName = "Smith";
+	// const source = "pco";
 
-	const res = await createResendContact({
-		email: mock_ctx.requestFrom,
-		firstName: firstName ?? "",
-		lastName: lastName ?? "",
-		source,
-		segment: { id: mock_ctx.segment.segmentId },
-	});
+	// const res = await createResendContact({
+	// 	email: mock_ctx.requestFrom,
+	// 	firstName: firstName ?? "",
+	// 	lastName: lastName ?? "",
+	// 	source,
+	// 	segment: { id: mock_ctx.segment.segmentId },
+	// });
 
-	// TODO: Fix error responses to ensure more info is included
-	if (!res.ok) return errorResponse(res.error);
+	// // TODO: Fix error responses to ensure more info is included
+	// if (!res.ok) return errorResponse(res.error);
 
 	return successResponse({
 		code: "success",
