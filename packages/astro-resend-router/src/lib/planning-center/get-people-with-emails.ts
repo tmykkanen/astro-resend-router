@@ -28,10 +28,8 @@ export const getPeopleWithEmails = async () => {
 
 		return [
 			{
-				id: person.id,
 				firstName: person.attributes.first_name ?? "",
 				lastName: person.attributes.last_name ?? "",
-				updated: person.attributes.updated_at ?? "",
 				email,
 				source: "planning_center_online",
 			},
