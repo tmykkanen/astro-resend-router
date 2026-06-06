@@ -27,13 +27,13 @@ export const LocalSegmentSchema = z.object({
 	/**
 	 * Display-friendly name for this segment.
 	 * Does not need to match the segment name in Resend.
-	 * @example 'Prairie Forge'
+	 * @example 'My Segment'
 	 */
 	segmentName: z.string(),
 	/**
-	 * Identifier for this segment. Used to match the local part of the recipient address.
-	 * Does not need to match the segment name in Resend.
-	 * @example 'pfi' // matches pfi@domain.com
+	 * Slug used to match the local part of the recipient address.
+	 * Does not need to match the segment name in Resend. Matched case insensitively.
+	 * @example 'mine' // matches mine@yourdomain.com
 	 */
 	segmentSlug: z
 		.string()
@@ -48,24 +48,27 @@ export const LocalSegmentSchema = z.object({
 	sendFromEmail: z.object({
 		/** Display name shown in the recipient's email client. */
 		name: z.string(),
-		/** Verified Resend sender address. */
+		/** Sender address from a verified Resend domain. */
 		email: z.email(),
 	}),
 	/**
-	 * List of email addresses permitted to trigger broadcasts from this segment/topics.
+	 * List of email addresses allowed to initiate broadcasts for this segment/topics.
 	 */
 	authorizedSenders: z.array(z.email()).default([]),
 	/**
 	 * Allow anyone to self-subscribe by emailing a `join`-prefixed address.
 	 * @example
-	 * // join.pfi@domain.com — subscribes to the 'pfi' segment
-	 * // join.pfi.newsletter@domain.com — subscribes to the 'newsletter' topic within 'pfi'
+	 * // join.mine@domain.com — subscribes to the 'mine' segment
+	 * // join.mine.newsletter@domain.com — subscribes to the 'newsletter' topic within 'mine'
 	 * @default false
 	 */
 	allowPublicJoin: z.boolean().default(false),
 	/**
-	 * Enables one-way sync from supported providers to Resend Segment before sending a broadcast.
-	 * Configure sync providers in sync/sync.ts
+	 * Array of contact provider slugs.
+	 * By default only the "pco" slug (Planning Center Online) is supported.
+	 * See readme for more details on adding a custom provider.
+	 * @example
+	 * syncContactsProviders: ["pco", "custom"],
 	 */
 	syncContactsProviders: z.array(z.string()).default([]),
 	/**
@@ -98,9 +101,7 @@ export const LocalSegmentSchema = z.object({
 			message: "Footer must include at least one link (<a>)",
 		})
 		.refine(
-			(html) =>
-				html === "" ||
-				html.toLowerCase().includes("{{{resend_unsubscribe_url}}}"),
+			(html) => html === "" || html.includes("{{{RESEND_UNSUBSCRIBE_URL}}}"),
 			{
 				message:
 					"Footer must include {{{RESEND_UNSUBSCRIBE_URL}}} for compliance.",
@@ -109,7 +110,7 @@ export const LocalSegmentSchema = z.object({
 	/**
 	 * Topics within this segment. Matched by an additional dot-separated suffix in the address.
 	 * @example
-	 * // Email sent to pfi.newsletter@domain.com routes to the 'newsletter' topic in 'pfi'
+	 * // Email sent to mine.newsletter@domain.com routes to the 'newsletter' topic in 'mine'
 	 */
 	topics: z
 		.array(LocalTopicSchema)
@@ -147,7 +148,11 @@ export const UserConfigSchema = z.object({
 			}
 			idents.add(seg.segmentSlug);
 		}
-	}),
+	}) /**
+	 * Array of filepaths as strings. Filepaths should point to files exporting custom sync providers. See readme for more info.
+	 * @example
+	 * customSyncProviders: ["./src/lib/providers/example-provider.ts"],
+	 */,
 	customSyncProviders: z.array(z.string()).default([]),
 });
 

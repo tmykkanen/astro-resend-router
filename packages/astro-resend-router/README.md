@@ -38,7 +38,7 @@ npm install astro-resend-router
 yarn add astro-resend-router
 ```
 
-2. Add the integration to your astro config
+2. Add the integration to your Astro config
 
 ```diff
 +import resendRouter from "astro-resend-router";
@@ -51,6 +51,8 @@ export default defineConfig({
 ```
 
 ### Configuration
+
+Configuration is validated at build time using Zod. Invalid configuration will fail the Astro build.
 
 #### Configure Resend
 
@@ -76,12 +78,20 @@ RESEND_WEBHOOK_SECRET=your_webhook_signing_secret
 
 #### Configure the integration options
 
-##### `segments`: Defines how incoming emails are routed.
+##### Routing Model
 
-- The local part of the email address determines the segment:
-  - `pfi@yourdomain.com` → `pfi` segment
-- Topics can be matched using dot notation:
-  - `pfi.newsletter@yourdomain.com` → `newsletter` topic in `pfi`
+Incoming email addresses are matched to slugs using the local part (everything before `@`). Segment and topic slugs are matched case-insensitively.
+
+Addresses are parsed as: `[action].[segment].[topic]@domain.com`
+
+| Email address                         | Result                                            |
+| ------------------------------------- | ------------------------------------------------- |
+| `mine@yourdomain.com`                 | Broadcast to the `mine` segment                   |
+| `mine.newsletter@yourdomain.com`      | Broadcast to the `newsletter` topic within `mine` |
+| `join.mine@yourdomain.com`            | Subscribe sender to the `mine` segment            |
+| `join.mine.newsletter@yourdomain.com` | Subscribe to the `newsletter` topic               |
+
+##### Integration Options
 
 ```typescript
 export default defineConfig({
@@ -89,22 +99,27 @@ export default defineConfig({
     resendRouter({
       segments: [
         {
-          segmentName: 'Prairie Forge',
-          segmentSlug: 'pfi',
+          segmentName: 'My segment',
+          segmentSlug: 'mine',
           segmentId: 'segment_id_from_resend',
-
           sendFromEmail: {
             name: 'Your Name',
             email: 'hello@yourdomain.com'
-          }
-
-          authorizedSenders: ['you@yourdomain.com'],
-
+          },
+          authorizedSenders: ['you@yourdomain.com', 'someone.else@yourdomain.com'],
           allowPublicJoin: true,
-
+          syncContactsProviders: ["pco"],
+          customEmailFooter: `
+            <p style="font-size:12px; color:#666; line-height:1.5; margin-top:16px;">
+              You’re receiving this because you subscribed to our newsletter.<br />
+              Want to stop receiving these emails?<br />
+            <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#666;">
+              Unsubscribe instantly.
+            </a>
+            </p>`
           topics: [
             {
-              topicName: 'Prairie Forge Newsletter',
+              topicName: 'Newsletter',
               topicSlug: 'newsletter',
               topicId: 'topic_id_from_resend'
             }
@@ -123,15 +138,17 @@ export default defineConfig({
 - Does not need to match the segment name in Resend.
 
 ```typescript
-segmentName: "Prairie Forge"; // matches pfi@yourdomain.com
+segmentName: "My Segment";
 ```
 
 `segmentSlug`: Slug used to match the recipient address.
 
 - Does not need to match the segment name in Resend.
+- Matched case insensitively.
+- Segment slugs must be unique. Duplicate slugs will throw a configuration error at build time.
 
 ```typescript
-segmentSlug: "pfi"; // matches pfi@yourdomain.com
+segmentSlug: "mine"; // matches mine@yourdomain.com
 ```
 
 `segmentId`: Resend audience segment ID.
@@ -150,11 +167,11 @@ segmentId: "segment_id_from_resend";
 ```typescript
 sendFromEmail: {
   name: "Your Name",
-  email: "no-reply@yourdomain.com",
+  email: "hello@yourdomain.com",
 };
 ```
 
-`authorizedSenders` (optional): List of email addresses allowed to send broadcasts for this segment/topics.
+`authorizedSenders` (optional): List of email addresses allowed to initiate broadcasts for this segment/topics.
 
 - The integration also checks [Contact Properties](https://resend.com/docs/dashboard/audiences/properties#contact-properties) for `authorized_senders = "true"`
 
@@ -166,19 +183,27 @@ authorizedSenders: ["you@yourdomain.com"];
 
 - Default: `false`
 - Examples:
-  - `join.pfi@yourdomain.com` -> subscribes to segment `pfi`
-  - `join.pfi.newsletter@yourdomain.com` -> subscribes to segment `pfi` and topic `newsletter`
+  - `join.mine@yourdomain.com` -> subscribes to segment `mine`
+  - `join.mine.newsletter@yourdomain.com` -> subscribes to segment `mine` and topic `newsletter`
 
 ```typescript
 allowPublicJoin: true;
 ```
+
+`syncContactsProviders` (optional): Array of contact provider slugs.
+
+- Enables one-way synchronization from external contact providers into the Resend Segment immediately before a broadcast is sent.
+- Must match built-in or custom slug from `customSyncProviders`
+- Only the "pco" slug (for syncing Planning Center Online) is built-in.
+- See readme for more details on adding a custom provider.
 
 `customEmailFooter` (optional): Custom HTML footer to replace the default footer appended to every broadcast email.
 
 ⚠️ Important:
 
 - Must be valid HTML (email-safe markup recommended)
-- Should include a Resend unsubscribe placeholder if required: {{{RESEND_UNSUBSCRIBE_URL}}}
+- Must include a Resend unsubscribe placeholder {{{RESEND_UNSUBSCRIBE_URL}}}
+- Must contain at least one `<a>` tag
 - Will be appended as-is (no sanitization or wrapping is applied)
 
 ```ts
@@ -197,27 +222,22 @@ customEmailFooter: `
 `topics` (optional): Defines topics within a segment.
 
 - `topicName`: Display-friendly name.
-- `topicSlug`: Slug matched after the segment name. Does not need to match the topic name in Resend.
+- `topicSlug`: Slug matched after the segment name. Does not need to match the topic name in Resend. Topic slugs must be unique. Duplicate slugs will throw a configuration error at build time.
 - `topicId`: Find it in Resend by navigating to Topics and clicking ... next to the target topic.
 
 ```typescript
 topics: [
   {
-    topicName: "Prairie Forge Newsletter",
-    name: "newsletter",
+    topicName: "Newsletter",
+    topicSlug: "newsletter",
     topicId: "topic_id_from_resend",
   },
 ];
 ```
 
-#### Routing Summary
+##### customSyncProviders
 
-| Email address                        | Result                                                       |
-| ------------------------------------ | ------------------------------------------------------------ |
-| `pfi@yourdomain.com`                 | Send to `pfi` segment                                        |
-| `pfi.newsletter@yourdomain.com`      | Send to `newsletter` topic                                   |
-| `join.pfi@yourdomain.com`            | Subscribe to segment `pfi` (if `allowPublicJoin: true`)      |
-| `join.pfi.newsletter@yourdomain.com` | Subscribe to topic `newsletter` (if `allowPublicJoin: true`) |
+See [Configuring Sync Providers](#configuring-sync-providers) below.
 
 #### Added privacy for email addresses (optional)
 
@@ -260,6 +280,107 @@ export default defineConfig({
       allowedHosts: ["ngrok_url"],
     },
   },
+});
+```
+
+#### Configuring Sync Providers
+
+A sync provider allows you to define how contacts are fetched and integrated into a segment.
+
+##### Built In Provider
+
+Planning Center Online is a built in sync provider.
+
+To enable:
+
+1. Follow the instructions for [Getting Started with Planning Center API](https://api.planningcenteronline.com/docs/overview/getting-started). Create a Personal Access Token and copy the Client ID and Secret for the next step.
+2. Set `PCO_CLIENT_ID` and `PCO_SECRET` as env variables.
+3. Set `syncContactsProviders: ["pco"]` in the desired segment.
+
+##### Creating and Using Custom Sync Providers
+
+A valid provider consists of three parts:
+
+1. Define fetch logic.
+   Create a function responsible for retrieving contacts and returning them in the `SourceContact` format.
+
+2. Wrap in provider object
+   Create a file that exports a `provider` object conforming to the `ContactsProvider` type
+
+Requirements:
+
+- Must include a unique `slug`
+- Must include a `getContacts` async function
+- getContacts should wrap your fetch function (from step 1)
+- Must return ok(contacts) or err(error)
+
+```typescript
+//example-provider.ts
+
+import { err, ok, type ContactsProvider } from "astro-resend-router";
+
+const getPeopleWithEmails = async () => {
+  const fail = false;
+
+  if (fail) {
+    return err({
+      code: "failure",
+      message: "example failure",
+      statusCode: 400,
+    });
+  }
+
+  return ok([
+    {
+      email: "user@example.com",
+      firstName: "Example",
+      lastName: "User",
+      source: "example-provider",
+    },
+  ]);
+};
+
+export const provider = {
+  slug: "example",
+  getContacts: async () => {
+    const res = await getPeopleWithEmails();
+
+    if (!res.ok) {
+      return err({
+        code: "example_get_error",
+        message: res.error.message,
+        statusCode: res.error.statusCode,
+      });
+    }
+
+    return ok(res.value);
+  },
+} satisfies ContactsProvider;
+```
+
+3. Register the provider in your config
+   The provider must be registered two places:
+
+- By **slug** in the syncContactsProviders field of a segment.
+- By **file path** in the customSyncProviders general config field.
+
+```typescript
+// astro.config.mjs
+export default defineConfig({
+  integrations: [
+    resendRouter({
+      segments: [
+        {
+          segmentName: 'My segment',
+          ...
+          syncContactsProviders: ["example"],
+          ...
+          topics: [...]
+        }
+      ],
+      customSyncProviders: ["./src/lib/providers/example-provider.ts"],
+    })
+  ]
 });
 ```
 
