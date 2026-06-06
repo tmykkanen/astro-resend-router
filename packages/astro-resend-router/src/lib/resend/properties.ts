@@ -1,4 +1,4 @@
-import { info } from "../api/index.ts";
+import { info } from "#/lib/api/index.ts";
 
 const properties = [{ key: "source", type: "string" as const }];
 
