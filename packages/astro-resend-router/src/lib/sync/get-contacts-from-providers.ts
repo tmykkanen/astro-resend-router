@@ -1,8 +1,8 @@
 import { err, ok } from "#/lib/api/index.ts";
 import type { Result } from "#/lib/shared/types.ts";
 
-import type { ContactProviderName } from "./providers.names.ts";
-import { CONTACT_PROVIDER_MAP } from "./providers.ts";
+import { contactProviderMap } from "./contact-providers.ts";
+import type { ContactProviderName } from "./contact-providers-schema.ts";
 import type {
 	GetContactsFromProvidersError,
 	GetContactsFromProvidersSuccess,
@@ -17,7 +17,7 @@ export const getContactsFromProviders = async (
 	const results: SourceContact[] = [];
 
 	for (const item of providers) {
-		const provider = CONTACT_PROVIDER_MAP[item];
+		const provider = contactProviderMap[item];
 		const res = await provider.getContacts();
 		if (!res.ok) return err(res.error);
 
