@@ -14,4 +14,40 @@ declare module "virtual:astro-resend-router/config" {
 	export default config;
 }
 
+declare module "virtual:astro-resend-router/providers" {
+	type OkResult<Success> = Success extends void
+		? { ok: true }
+		: { ok: true; value: Success };
+	type ErrResult<Error> = Error extends void
+		? { ok: false }
+		: { ok: false; error: Error };
+
+	type Result<Success, Error> = OkResult<Success> | ErrResult<Error>;
+
+	export type SourceContact = {
+		email: string;
+		firstName?: string;
+		lastName?: string;
+		source: string;
+	};
+
+	export type Status<C extends string> = {
+		code: C;
+		message: string;
+		statusCode: number;
+		details?: Record<string, unknown>;
+	};
+
+	export type GetContactsFromProvidersError = Status<string>;
+
+	type ContactsProvider = {
+		name: string;
+		getContacts: () => Promise<
+			Result<SourceContact[], GetContactsFromProvidersError>
+		>;
+	};
+
+	export const providers: ContactsProvider[];
+}
+
 declare const __VERSION__: string;

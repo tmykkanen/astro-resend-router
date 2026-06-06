@@ -29,9 +29,10 @@ export default defineConfig({
             name: "RESEND TEST",
             email: "hello@updates.sojourners.church",
           },
-          syncContactsProviders: ["pco"],
+          syncContactsProviders: ["example"],
         },
       ],
+      customSyncProviders: ["./src/lib/providers/example-provider.ts"],
     }),
   ],
   vite: {

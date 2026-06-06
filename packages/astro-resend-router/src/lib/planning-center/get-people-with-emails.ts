@@ -1,6 +1,5 @@
 import { err, ok } from "#/lib/api/index.ts";
-import type { Result } from "#/lib/shared/types.ts";
-import type { SourceContact } from "#/lib/sync/index.ts";
+import type { Result, SourceContact } from "#/lib/shared/types.ts";
 
 import { fetchEmails } from "./fetch-emails.ts";
 import { fetchPeople } from "./fetch-people.ts";

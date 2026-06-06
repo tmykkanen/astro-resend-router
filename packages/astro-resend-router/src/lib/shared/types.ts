@@ -20,3 +20,10 @@ export type UnknownErrorCode = "unknown_error";
 export type UnknownError = Status<UnknownErrorCode>;
 
 export type ValidatedContext = ValidationSuccess;
+
+export type SourceContact = {
+	email: string;
+	firstName?: string;
+	lastName?: string;
+	source: string;
+};

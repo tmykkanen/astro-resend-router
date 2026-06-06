@@ -1,11 +1,21 @@
+import config from "virtual:astro-resend-router/config";
+import { providers } from "virtual:astro-resend-router/providers";
 import type { APIRoute } from "astro";
 
-import { errorResponse, successResponse } from "#/lib/api/response.ts";
+import { successResponse } from "#/lib/api/response.ts";
 // import { createResendContact } from "#/lib/resend/index.ts";
 import type { ValidatedContext } from "#/lib/shared/types.ts";
-import { syncContacts } from "#/lib/sync/index.ts";
+import { getContactsFromProviders } from "#/lib/sync/get-contacts-from-providers.ts";
+// import { syncContacts } from "#/lib/sync/index.ts";
 
 export const GET: APIRoute = async () => {
+	console.log("providers:", providers);
+
+	for (const provider of providers) {
+		console.log(provider.name);
+		console.log(await provider.getContacts());
+	}
+
 	const mock_ctx: ValidatedContext = {
 		action: "broadcast",
 		requestFrom: "example@email.com",
@@ -20,17 +30,21 @@ export const GET: APIRoute = async () => {
 			},
 			authorizedSenders: ["auth@example.com"],
 			allowPublicJoin: true,
-			syncContactsProviders: ["mock"],
+			syncContactsProviders: config.segments[0]?.syncContactsProviders ?? [],
 			topics: [],
 			customEmailFooter: "",
 		},
 	};
 
-	const sync = await syncContacts(mock_ctx);
-	if (!sync.ok) return errorResponse(sync.error);
+	console.log(await getContactsFromProviders(mock_ctx));
 
-	console.log(sync.value);
-	console.log(sync.value.length);
+	// console.log(config.segments[0]?.syncContactsProviders);
+
+	// const sync = await syncContacts(mock_ctx);
+	// if (!sync.ok) return errorResponse(sync.error);
+
+	// console.log(sync.value);
+	// console.log(sync.value.length);
 	//
 	//
 

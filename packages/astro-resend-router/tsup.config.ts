@@ -17,6 +17,7 @@ export default defineConfig((options) => {
 		external: [
 			...Object.keys(peerDependencies),
 			"virtual:astro-resend-router/config",
+			"virtual:astro-resend-router/providers",
 			"astro:env/server",
 		],
 		tsconfig: "tsconfig.json",

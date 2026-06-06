@@ -2,7 +2,7 @@ import type { Plugin } from "vite";
 
 import type { UserConfig } from "./config.schemas.ts";
 
-export function createVM(
+export function createConfigVM(
 	VIRTUAL_MODULE_ID: string,
 	EXPORT: UserConfig,
 ): Plugin {

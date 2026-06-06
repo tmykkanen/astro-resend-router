@@ -6,7 +6,8 @@ import { info, throwError } from "#/lib/api/index.ts";
 import pkg from "../package.json";
 import type { UserConfig } from "./lib/config/config.schemas.ts";
 import { UserConfigSchema } from "./lib/config/config.schemas.ts";
-import { createVM } from "./lib/config/create-virtual-module.ts";
+import { createConfigVM } from "./lib/config/create-config-vm.ts";
+import { createProvidersVM } from "./lib/config/create-providers-vm.ts";
 import { syncResendProperties } from "./lib/resend/properties.ts";
 
 export function integration(userConfig: UserConfig): AstroIntegration {
@@ -65,7 +66,13 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 							__VERSION__: JSON.stringify(pkg.version),
 						},
 
-						plugins: [createVM("virtual:astro-resend-router/config", config)],
+						plugins: [
+							createConfigVM("virtual:astro-resend-router/config", config),
+							createProvidersVM(
+								"virtual:astro-resend-router/providers",
+								config,
+							),
+						],
 					},
 				});
 				injectRoute({

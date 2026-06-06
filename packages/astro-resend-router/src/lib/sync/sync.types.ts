@@ -1,11 +1,4 @@
-import type { Result, Status } from "#/lib/shared/types.ts";
-
-export type SourceContact = {
-	email: string;
-	firstName?: string;
-	lastName?: string;
-	source: string;
-};
+import type { Result, SourceContact, Status } from "#/lib/shared/types.ts";
 
 export type GetContactsFromProvidersError = Status<string>;
 export type GetContactsFromProvidersSuccess = [string, SourceContact][];

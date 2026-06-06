@@ -1,7 +1,5 @@
 import { z } from "astro/zod";
 
-import { contactProviderNames } from "#/lib/sync/contact-providers-schema.ts";
-
 export const LocalTopicSchema = z.object({
 	/**
 	 * Display-friendly name for this topic.
@@ -70,7 +68,7 @@ export const LocalSegmentSchema = z.object({
 	 * Enables one-way sync from supported providers to Resend Segment before sending a broadcast.
 	 * Configure sync providers in sync/sync.ts
 	 */
-	syncContactsProviders: z.array(z.enum(contactProviderNames)).default([]),
+	syncContactsProviders: z.array(z.string()).default([]),
 	/**
 	 * Optional custom HTML footer to replace the default footer appended to every broadcast email.
 	 * This should be a fully-formed HTML string.
@@ -151,6 +149,7 @@ export const UserConfigSchema = z.object({
 			idents.add(seg.segmentSlug);
 		}
 	}),
+	customSyncProviders: z.array(z.string()).default([]),
 });
 
 export type LocalTopic = z.infer<typeof LocalTopicSchema>;

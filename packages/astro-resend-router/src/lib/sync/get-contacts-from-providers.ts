@@ -1,23 +1,39 @@
-import { err, ok } from "#/lib/api/index.ts";
-import type { Result } from "#/lib/shared/types.ts";
+import { providers as customProviders } from "virtual:astro-resend-router/providers";
 
-import { contactProviderMap } from "./contact-providers.ts";
-import type { ContactProviderName } from "./contact-providers-schema.ts";
+import { err, ok } from "#/lib/api/index.ts";
+import type {
+	Result,
+	SourceContact,
+	ValidatedContext,
+} from "#/lib/shared/types.ts";
+
+import { builtInProviders } from "./contact-providers.ts";
 import type {
 	GetContactsFromProvidersError,
 	GetContactsFromProvidersSuccess,
-	SourceContact,
 } from "./sync.types.ts";
 
 export const getContactsFromProviders = async (
-	providers: ContactProviderName[],
+	ctx: ValidatedContext,
 ): Promise<
 	Result<GetContactsFromProvidersSuccess, GetContactsFromProvidersError>
 > => {
 	const results: SourceContact[] = [];
 
-	for (const item of providers) {
-		const provider = contactProviderMap[item];
+	const providers = ctx.segment.syncContactsProviders.map((provider) => {
+		const builtIn = builtInProviders.find((p) => p.name === provider);
+		if (builtIn) return builtIn;
+
+		const custom = customProviders.find((p) => p.name === provider);
+		if (custom) return custom;
+
+		// TODO: Provide better error handling
+		throw new Error(`Unknown provider: "${provider}"`);
+	});
+
+	for (const provider of providers) {
+		console.log(provider);
+
 		const res = await provider.getContacts();
 		if (!res.ok) return err(res.error);
 
