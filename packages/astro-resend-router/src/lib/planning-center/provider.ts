@@ -4,7 +4,7 @@ import type { ContactsProvider } from "#/lib/sync/index.ts";
 import { getPeopleWithEmails } from "./get-people-with-emails.ts";
 
 export const pcoProvider = {
-	name: "pco",
+	slug: "pco",
 	getContacts: async () => {
 		const res = await getPeopleWithEmails();
 

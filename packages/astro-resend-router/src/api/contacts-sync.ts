@@ -1,5 +1,4 @@
 import config from "virtual:astro-resend-router/config";
-import { providers } from "virtual:astro-resend-router/providers";
 import type { APIRoute } from "astro";
 
 import { successResponse } from "#/lib/api/response.ts";
@@ -9,13 +8,6 @@ import { getContactsFromProviders } from "#/lib/sync/get-contacts-from-providers
 // import { syncContacts } from "#/lib/sync/index.ts";
 
 export const GET: APIRoute = async () => {
-	console.log("providers:", providers);
-
-	for (const provider of providers) {
-		console.log(provider.name);
-		console.log(await provider.getContacts());
-	}
-
 	const mock_ctx: ValidatedContext = {
 		action: "broadcast",
 		requestFrom: "example@email.com",

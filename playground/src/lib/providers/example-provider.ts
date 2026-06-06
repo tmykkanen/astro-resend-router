@@ -1,7 +1,7 @@
 import { err, ok, type ContactsProvider } from "astro-resend-router";
 
 export const provider = {
-  name: "example",
+  slug: "example",
   getContacts: async () => {
     const res = await getPeopleWithEmails();
 

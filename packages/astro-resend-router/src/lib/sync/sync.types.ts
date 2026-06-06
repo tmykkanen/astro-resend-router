@@ -4,7 +4,7 @@ export type GetContactsFromProvidersError = Status<string>;
 export type GetContactsFromProvidersSuccess = [string, SourceContact][];
 
 export type ContactsProvider = {
-	name: string;
+	slug: string;
 	getContacts: () => Promise<
 		Result<SourceContact[], GetContactsFromProvidersError>
 	>;

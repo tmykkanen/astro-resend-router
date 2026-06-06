@@ -41,7 +41,7 @@ declare module "virtual:astro-resend-router/providers" {
 	export type GetContactsFromProvidersError = Status<string>;
 
 	type ContactsProvider = {
-		name: string;
+		slug: string;
 		getContacts: () => Promise<
 			Result<SourceContact[], GetContactsFromProvidersError>
 		>;

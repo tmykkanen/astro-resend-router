@@ -22,10 +22,10 @@ export const getContactsFromProviders = async (
 
 	const providers = ctx.segment.syncContactsProviders
 		.map((provider) => {
-			const builtIn = builtInProviders.find((p) => p.name === provider);
+			const builtIn = builtInProviders.find((p) => p.slug === provider);
 			if (builtIn) return builtIn;
 
-			const custom = customProviders.find((p) => p.name === provider);
+			const custom = customProviders.find((p) => p.slug === provider);
 			if (custom) return custom;
 
 			return "unknown_provider";
@@ -33,8 +33,6 @@ export const getContactsFromProviders = async (
 		.filter((p) => p !== "unknown_provider");
 
 	for (const provider of providers) {
-		console.log(provider);
-
 		const res = await provider.getContacts();
 		if (!res.ok) return err(res.error);
 
