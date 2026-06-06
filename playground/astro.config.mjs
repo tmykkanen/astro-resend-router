@@ -12,12 +12,13 @@ export default defineConfig({
       segments: [
         {
           segmentName: "Astro Resend Test",
-          segmentIdentifier: "test",
+          segmentSlug: "test",
           segmentId: "720e6fd0-85d1-4745-af43-e6c7e2851b4d",
+
           topics: [
             {
               topicName: "Test Topic",
-              topicIdentifier: "news",
+              topicSlug: "news",
               topicId: "0a5a62c7-e4e1-4d87-9bfc-7e01c2102c1f",
             },
           ],
@@ -28,8 +29,10 @@ export default defineConfig({
             name: "RESEND TEST",
             email: "hello@updates.sojourners.church",
           },
+          syncContactsProviders: ["example"],
         },
       ],
+      customSyncProviders: ["./src/lib/providers/example-provider.ts"],
     }),
   ],
   vite: {

@@ -1,0 +1,161 @@
+import { z } from "astro/zod";
+
+export const LocalTopicSchema = z.object({
+	/**
+	 * Display-friendly name for this topic.
+	 * Does not need to match the topic name in Resend.
+	 * @example 'PFI Newsletter'
+	 */
+	topicName: z.string(),
+	/**
+	 * Identifier for this topic. Matched as a dot-separated suffix after the segment name. Case-insensitive.
+	 * Does not need to match the topic name in Resend.
+	 * @example 'newsletter' // matches pfi.newsletter@domain.com
+	 */
+	topicSlug: z
+		.string()
+		.trim()
+		.transform((s) => s.toLowerCase()),
+	/**
+	 * Resend topic ID.
+	 * Find it by navigating to Topics and clicking `...` next to the target topic.
+	 */
+	topicId: z.string(),
+});
+
+export const LocalSegmentSchema = z.object({
+	/**
+	 * Display-friendly name for this segment.
+	 * Does not need to match the segment name in Resend.
+	 * @example 'My Segment'
+	 */
+	segmentName: z.string(),
+	/**
+	 * Slug used to match the local part of the recipient address.
+	 * Does not need to match the segment name in Resend. Matched case insensitively.
+	 * @example 'mine' // matches mine@yourdomain.com
+	 */
+	segmentSlug: z
+		.string()
+		.trim()
+		.transform((s) => s.toLowerCase()),
+	/**
+	 * Resend audience segment ID.
+	 * Find it by navigating to Segments and clicking `...` next to the target segment.
+	 */
+	segmentId: z.string(),
+	/** The sender identity used for outgoing broadcasts from this segment/topics. */
+	sendFromEmail: z.object({
+		/** Display name shown in the recipient's email client. */
+		name: z.string(),
+		/** Sender address from a verified Resend domain. */
+		email: z.email(),
+	}),
+	/**
+	 * List of email addresses allowed to initiate broadcasts for this segment/topics.
+	 */
+	authorizedSenders: z.array(z.email()).default([]),
+	/**
+	 * Allow anyone to self-subscribe by emailing a `join`-prefixed address.
+	 * @example
+	 * // join.mine@domain.com — subscribes to the 'mine' segment
+	 * // join.mine.newsletter@domain.com — subscribes to the 'newsletter' topic within 'mine'
+	 * @default false
+	 */
+	allowPublicJoin: z.boolean().default(false),
+	/**
+	 * Array of contact provider slugs.
+	 * By default only the "pco" slug (Planning Center Online) is supported.
+	 * See readme for more details on adding a custom provider.
+	 * @example
+	 * syncContactsProviders: ["pco", "custom"],
+	 */
+	syncContactsProviders: z.array(z.string()).default([]),
+	/**
+	 * Optional custom HTML footer to replace the default footer appended to every broadcast email.
+	 * This should be a fully-formed HTML string.
+	 *
+	 * ⚠️ Important:
+	 * - Must be valid HTML (email-safe markup recommended)
+	 * - Should include a Resend unsubscribe placeholder if required: {{{RESEND_UNSUBSCRIBE_URL}}}
+	 * - Will be appended as-is (no sanitization or wrapping is applied)
+	 *
+	 * @example
+	 * ```ts
+	 * customEmailFooter: `
+	 *  <hr style="margin-top:24px;border:none;border-top:1px solid #444;" />
+	 *  <p style="font-size:12px; color:#666; line-height:1.5; margin-top:16px;">
+	 *  You’re receiving this because you subscribed to our newsletter.<br />
+	 *  Want to stop receiving these emails?<br />
+	 *    <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#666;">
+	 *      Unsubscribe instantly.
+	 *    </a>
+	 *  </p>
+	 * `
+	 * ```
+	 */
+	customEmailFooter: z
+		.string()
+		.default("")
+		.refine((html) => html === "" || html.toLowerCase().includes("<a"), {
+			message: "Footer must include at least one link (<a>)",
+		})
+		.refine(
+			(html) => html === "" || html.includes("{{{RESEND_UNSUBSCRIBE_URL}}}"),
+			{
+				message:
+					"Footer must include {{{RESEND_UNSUBSCRIBE_URL}}} for compliance.",
+			},
+		),
+	/**
+	 * Topics within this segment. Matched by an additional dot-separated suffix in the address.
+	 * @example
+	 * // Email sent to mine.newsletter@domain.com routes to the 'newsletter' topic in 'mine'
+	 */
+	topics: z
+		.array(LocalTopicSchema)
+		.superRefine((topics, ctx) => {
+			const idents = new Set<string>();
+			for (const topic of topics) {
+				if (idents.has(topic.topicSlug)) {
+					ctx.addIssue({
+						code: "custom",
+						message: `Duplicate topic slug: ${topic.topicSlug}`,
+					});
+				}
+				idents.add(topic.topicSlug);
+			}
+		})
+		.default([]),
+});
+
+export const UserConfigSchema = z.object({
+	/**
+	 * Resend audience segments used to route incoming emails.
+	 * Each segment is matched by the local part of the recipient address.
+	 * @example
+	 * segments: [{ name: 'pfi', segmentId: '...' }]
+	 * // Email sent to pfi@domain.com routes to the 'pfi' segment
+	 */
+	segments: z.array(LocalSegmentSchema).superRefine((segments, ctx) => {
+		const idents = new Set<string>();
+		for (const seg of segments) {
+			if (idents.has(seg.segmentSlug)) {
+				ctx.addIssue({
+					code: "custom",
+					message: `Duplicate segment name: ${seg.segmentSlug}`,
+				});
+			}
+			idents.add(seg.segmentSlug);
+		}
+	}) /**
+	 * Array of filepaths as strings. Filepaths should point to files exporting custom sync providers. See readme for more info.
+	 * @example
+	 * customSyncProviders: ["./src/lib/providers/example-provider.ts"],
+	 */,
+	customSyncProviders: z.array(z.string()).default([]),
+});
+
+export type LocalTopic = z.infer<typeof LocalTopicSchema>;
+export type LocalSegment = z.infer<typeof LocalSegmentSchema>;
+export type UserConfig = z.infer<typeof UserConfigSchema>;

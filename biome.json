@@ -3,7 +3,20 @@
 	"assist": {
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							[":BUN:", ":NODE:"],
+							":BLANK_LINE:",
+							[":URL:", ":PACKAGE_WITH_PROTOCOL:", ":PACKAGE:"],
+							":BLANK_LINE:",
+							":ALIAS:",
+							":BLANK_LINE:",
+							":PATH:"
+						]
+					}
+				}
 			}
 		}
 	},
@@ -24,11 +37,23 @@
 				"noUnusedTemplateLiteral": "error",
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
-				"noUselessElse": "error"
+				"noUselessElse": "error",
+				"useImportType": {
+					"level": "on",
+					"options": {
+						"style": "separatedType"
+					}
+				}
 			}
 		}
 	},
 	"files": {
-		"includes": ["**", "!**/dist", "!**/.astro", "!playground"]
+		"includes": [
+			"**",
+			"!**/dist",
+			"!**/.astro",
+			"!playground",
+			"!**/*.openapi.types.d.ts"
+		]
 	}
 }
