@@ -14,7 +14,6 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 	if (!sourceContacts.ok) return err(sourceContacts.error);
 
 	// * Fetch resend contact list
-	//  TODO: Add config for segment specific sync - Should this come from the triggering function or from user settings?
 	const resendContacts = await fetchResendContactsList(ctx.segment.segmentId);
 	if (!resendContacts.ok) return err(resendContacts.error);
 
@@ -42,6 +41,5 @@ export const syncContacts = async (ctx: ValidatedContext) => {
 		if (!res.ok) return err(res.error);
 	}
 
-	// # TEMP OK Return
-	return ok(contactsToSync);
+	return ok({ contactsToSync });
 };

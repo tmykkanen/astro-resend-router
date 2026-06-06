@@ -20,16 +20,17 @@ export const getContactsFromProviders = async (
 > => {
 	const results: SourceContact[] = [];
 
-	const providers = ctx.segment.syncContactsProviders.map((provider) => {
-		const builtIn = builtInProviders.find((p) => p.name === provider);
-		if (builtIn) return builtIn;
+	const providers = ctx.segment.syncContactsProviders
+		.map((provider) => {
+			const builtIn = builtInProviders.find((p) => p.name === provider);
+			if (builtIn) return builtIn;
 
-		const custom = customProviders.find((p) => p.name === provider);
-		if (custom) return custom;
+			const custom = customProviders.find((p) => p.name === provider);
+			if (custom) return custom;
 
-		// TODO: Provide better error handling
-		throw new Error(`Unknown provider: "${provider}"`);
-	});
+			return "unknown_provider";
+		})
+		.filter((p) => p !== "unknown_provider");
 
 	for (const provider of providers) {
 		console.log(provider);

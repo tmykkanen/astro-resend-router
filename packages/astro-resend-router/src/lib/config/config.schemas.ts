@@ -63,7 +63,6 @@ export const LocalSegmentSchema = z.object({
 	 * @default false
 	 */
 	allowPublicJoin: z.boolean().default(false),
-	// TODO: Create option to select per-segment sync services
 	/**
 	 * Enables one-way sync from supported providers to Resend Segment before sending a broadcast.
 	 * Configure sync providers in sync/sync.ts
