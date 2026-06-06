@@ -12,10 +12,6 @@
 		"./api/astro-resend-router.ts": {
 			"types": "./dist/api/astro-resend-router.d.ts",
 			"default": "./dist/api/astro-resend-router.js"
-		},
-		"./api/contacts-sync.ts": {
-			"types": "./dist/api/astrocontacts-sync.d.ts",
-			"default": "./dist/api/contacts-sync.js"
 		}
 	},
 	"files": [

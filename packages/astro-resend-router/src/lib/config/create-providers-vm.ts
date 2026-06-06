@@ -34,10 +34,6 @@ export function createProvidersVM(
 					.map((_, i) => `provider${i}`)
 					.join(", ");
 
-				console.log(imports);
-				console.log(exports);
-				console.log(process.env.PWD);
-
 				return `
         ${imports}
 

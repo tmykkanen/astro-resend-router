@@ -7,7 +7,7 @@ import type {
 	ValidatedContext,
 } from "#/lib/shared/types.ts";
 
-import { builtInProviders } from "./contact-providers.ts";
+import { builtInProviders } from "./built-in-providers.ts";
 import type {
 	GetContactsFromProvidersError,
 	GetContactsFromProvidersSuccess,

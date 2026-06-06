@@ -80,11 +80,6 @@ export function integration(userConfig: UserConfig): AstroIntegration {
 					entrypoint: "astro-resend-router/api/astro-resend-router.ts",
 					prerender: false,
 				});
-				injectRoute({
-					pattern: "/api/contacts-sync",
-					entrypoint: "astro-resend-router/api/contacts-sync.ts",
-					prerender: false,
-				});
 			},
 			"astro:config:done": async () => {
 				// Set up Resend properties
