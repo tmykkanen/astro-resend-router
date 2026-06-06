@@ -1,5 +1,15 @@
 # astro-resend-router
 
+## 2.0.0
+
+### Major Changes
+
+- [#12](https://github.com/tmykkanen/astro-resend-router/pull/12) [`55eb639`](https://github.com/tmykkanen/astro-resend-router/commit/55eb639bd8e13b155214b9599847ac7b00b77639) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Rewrote and restructured + added custom contact syncing
+  - Refactored / reorganized internal file structure.
+  - Moved features into domains using barrel exports.
+  - Added custom syncing feature with Planning Center Online built in and capacity for user-added sync providers.
+  - Previous configs will break and need to be updated, but core functionality remains the same.
+
 ## 1.1.1
 
 ### Patch Changes
