@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 2.1.1
+
+### Patch Changes
+
+- [`0cbf2d3`](https://github.com/tmykkanen/astro-resend-router/commit/0cbf2d3c30ca1ba1d9efcdb802d9581370204914) Thanks [@tmykkanen](https://github.com/tmykkanen)! - fixed optional config options accidentally being required in ts
+
 ## 2.1.0
 
 ### Minor Changes
