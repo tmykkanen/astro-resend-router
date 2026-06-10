@@ -4,13 +4,13 @@ import { envField } from "astro/config";
 import { info, throwError } from "#/lib/api/index.ts";
 
 import pkg from "../package.json";
-import type { UserConfig } from "./lib/config/config.schemas.ts";
+import type { UserConfigInput } from "./lib/config/config.schemas.ts";
 import { UserConfigSchema } from "./lib/config/config.schemas.ts";
 import { createConfigVM } from "./lib/config/create-config-vm.ts";
 import { createProvidersVM } from "./lib/config/create-providers-vm.ts";
 import { syncResendProperties } from "./lib/resend/properties.ts";
 
-export function integration(userConfig: UserConfig): AstroIntegration {
+export function integration(userConfig: UserConfigInput): AstroIntegration {
 	if (userConfig === undefined) {
 		return throwError(
 			"Missing configuration",

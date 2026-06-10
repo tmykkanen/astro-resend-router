@@ -159,3 +159,4 @@ export const UserConfigSchema = z.object({
 export type LocalTopic = z.infer<typeof LocalTopicSchema>;
 export type LocalSegment = z.infer<typeof LocalSegmentSchema>;
 export type UserConfig = z.infer<typeof UserConfigSchema>;
+export type UserConfigInput = z.input<typeof UserConfigSchema>;
