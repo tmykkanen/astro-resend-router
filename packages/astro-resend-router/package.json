@@ -47,6 +47,7 @@
 		"tsup": "8.5.1"
 	},
 	"dependencies": {
+		"cheerio": "^1.2.0",
 		"openapi-fetch": "^0.17.0",
 		"resend": "^6.12.3"
 	}
