@@ -1,5 +1,13 @@
 # astro-resend-router
 
+## 2.1.0
+
+### Minor Changes
+
+- [`1d86e79`](https://github.com/tmykkanen/astro-resend-router/commit/1d86e7934edd1aa31b42db974137dc0cf3ab2a57) Thanks [@tmykkanen](https://github.com/tmykkanen)! - Added support for better mailchimp forwarding
+  - use cheerio to strip mailchimp header and footer, since we'll use
+    Resend unsubscribe links
+
 ## 2.0.0
 
 ### Major Changes
