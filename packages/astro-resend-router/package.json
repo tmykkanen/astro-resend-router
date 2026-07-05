@@ -40,11 +40,11 @@
 	"homepage": "https://github.com/tmykkanen/astro-resend-router#readme",
 	"license": "MIT",
 	"peerDependencies": {
-		"astro": "^6.0.0",
-		"vite": "^7"
+		"astro": "^6 || ^7.0.0"
 	},
 	"devDependencies": {
-		"tsup": "8.5.1"
+		"tsup": "8.5.1",
+		"vite": "^7"
 	},
 	"dependencies": {
 		"cheerio": "^1.2.0",

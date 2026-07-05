@@ -16,6 +16,7 @@ export default defineConfig((options) => {
 		minify: !dev,
 		external: [
 			...Object.keys(peerDependencies),
+			"vite",
 			"virtual:astro-resend-router/config",
 			"virtual:astro-resend-router/providers",
 			"astro:env/server",

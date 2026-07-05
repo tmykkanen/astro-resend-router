@@ -21,7 +21,7 @@ importers:
   packages/astro-resend-router:
     dependencies:
       astro:
-        specifier: ^6.0.0
+        specifier: ^6 || ^7.0.0
         version: 6.3.1(@types/node@24.12.3)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(yaml@2.9.0)
       cheerio:
         specifier: ^1.2.0
@@ -32,13 +32,13 @@ importers:
       resend:
         specifier: ^6.12.3
         version: 6.12.3
-      vite:
-        specifier: ^7
-        version: 7.3.3(@types/node@24.12.3)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.0)
     devDependencies:
       tsup:
         specifier: 8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.14)(typescript@6.0.3)(yaml@2.9.0)
+      vite:
+        specifier: ^7
+        version: 7.3.3(@types/node@24.12.3)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.9.0)
 
   playground:
     dependencies:
