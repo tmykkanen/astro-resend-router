@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 2.1.2
+
+### Patch Changes
+
+- [`84baa2e`](https://github.com/tmykkanen/astro-resend-router/commit/84baa2eddc8dd6294ee125e6958e92435f32d206) Thanks [@tmykkanen](https://github.com/tmykkanen)! - moved vite to devDependencies
+
 ## 2.1.1
 
 ### Patch Changes
