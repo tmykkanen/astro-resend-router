@@ -1,5 +1,11 @@
 # astro-resend-router
 
+## 2.1.3
+
+### Patch Changes
+
+- [`621506e`](https://github.com/tmykkanen/astro-resend-router/commit/621506e913c552e4db6d6d6e7a78e54597e387fe) Thanks [@tmykkanen](https://github.com/tmykkanen)! - fix handling of plain text emails
+
 ## 2.1.2
 
 ### Patch Changes
